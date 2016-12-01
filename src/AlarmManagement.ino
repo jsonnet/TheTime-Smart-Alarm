@@ -13,49 +13,50 @@ void alarm() {
 }
 
 void setAlarmBySunrise() {
-  String cmd = "/v1/public/yql?q=select%20astronomy.sunrise%20from%20weather.forecast%20where%20woeid=690637\r\n";
+  String cmd = "/v1/public/yql?q=select%20astronomy.sunrise%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text='Saarlouis, de')\r\n";
   String host = "query.yahooapis.com";
   String antwort;
 
   httpGET(host, cmd, antwort);
-  
+
   String s = searchXML(antwort, "sunrise");
 
-  ALARM_HOUR = s[0] - '0'; //try .toInt()
+  ALARM_HOUR = s[0] - '0'; //try .toInt() //only think about first pos because sunrise-hour always <10
   ALARM_MINUTE =  (10 * (s[2] - '0')) + (s[3] - '0');
 }
 
 void setAlarmByWeather() {
-  String cmd = "/v1/public/yql?q=select%20item.WEATHER_STATE.text%20from%20weather.forecast%20where%20woeid=690637\r\n";
+  String cmd = "/v1/public/yql?q=select%20item.condition.text%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text='Saarlouis, de')\r\n";
   String host = "query.yahooapis.com";
   String antwort;
 
   httpGET(host, cmd, antwort);
-  
+
   String weather = searchXML(antwort, "text");
   WEATHER_STATE = " " + weather;
   Serial.println(WEATHER_STATE);
 
-  //   if(strcmp(s,"Scattered Showers")==0 || strcmp(s, "Showers")==0 || strcmp(s, "Snowy") == 0){
-  //    int gesammtminuten = (ALARM_HOUR*60+ALARM_MINUTE) - 30;
-  //    ALARM_MINUTE = gesammtminuten % 60;
-  //    Serial.println(ALARM_MINUTE);
-  //   }
+  const char* help = weather.c_str();
+
+  // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms,
+  if (strstr(help, "Cloudy") || strstr(help, "Rain") || strstr(help, "Breezy") || strstr(help, "Sunny") || strstr(help, "Thunderstorms")) {
+    int gesammtminuten = (ALARM_HOUR * 60 + ALARM_MINUTE) - 30;
+    ALARM_MINUTE = gesammtminuten % 60;
+    Serial.println(ALARM_MINUTE);
+  }
 }
 
 String searchXML(String xml, String suchtext) {
-  float val = 0. / 0.;               // Rückgabewert NaN
-  String valStr;                     // Hilfsstring
-  int start, ende;                   // Index im Text
-  suchtext = suchtext + '=' + '"';   // Suchtext
-  start = xml.indexOf(suchtext);     // Suche Text
+  String valStr;
+  int start, ende;
+  suchtext = suchtext + '=' + '"';
+  start = xml.indexOf(suchtext);
   delay(10);
-  if (start > 0) {                   // Item gefunden
-    start = start + suchtext.length(); // hinter Item kommt Zahl
-    ende =  xml.indexOf('"', start); // Ende der Zahl
-    valStr = xml.substring(start, ende); // Zahltext
-    //val = valStr;         // Text in Float
-  } //else                             // Item nicht gefunden
-   // Serial.print("error - no such item: " + suchtext);
+  if (start > 0) {
+    start = start + suchtext.length();
+    ende =  xml.indexOf('"', start);
+    valStr = xml.substring(start, ende);
+  } //else
+  // Serial.print("error - no such item: " + suchtext);
   return valStr;
 }

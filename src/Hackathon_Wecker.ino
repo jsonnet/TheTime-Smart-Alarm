@@ -5,6 +5,9 @@
 
 #define AP_SSID "Joshua's iPhone"  // AP Netzwerk
 
+//** GENERAL **
+const String HOME_ADDR [2] = {"49.239778", "6.69457"};
+const String WORK_ADDR [2] = {"49.319104", "6.751235"};
 
 //** WEATHER **
 int OUT_TEMP = 0;
@@ -15,6 +18,11 @@ int ALARM_HOUR;
 int ALARM_MINUTE;
 int RING_FOR = 60000;
 boolean alarmDays [7] = { false, true, true, true, true, true, false }; // SUN, MON ...
+
+//** TRAFFIC **
+const String MAPS_HOST = "maps.googleapis.com/maps/api/distancematrix/json?origins=" + HOME_ADDR[0] + "," + HOME_ADDR[1] + "&destinations=" + WORK_ADDR[0] + "," + WORK_ADDR[1] + "&key=[key]"; //https://
+// response ["rows"][0]["elements"][0]["duration_in_traffic"]["value"]
+int ADD_TRAVEL_TIME = 0;
 
 //** TIME NTP **
 unsigned int localPort = 80;

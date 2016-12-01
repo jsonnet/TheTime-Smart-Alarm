@@ -1,5 +1,6 @@
 #include <WiFiClient.h>
 #include <ESP8266WiFi.h>
+#define AP_SSID "Joshua's iPhone"  // AP Netzwerk
 //** WEATHER **
 int OUT_TEMP = 0;
 String WEATHER_STATE;
@@ -63,6 +64,7 @@ void loop() {
   }
   
   if (HOUR == ALARM_HOUR && MINUTE == ALARM_MINUTE) {
+    alarm();
   }
 
 }
@@ -70,6 +72,8 @@ void loop() {
 void setup() {
   kitInit();
 
+  //setAlarmBySunrise();
+  setAlarmByWeather();
   //TESTING
   ALARM_HOUR = 7;
   ALARM_MINUTE = 30;

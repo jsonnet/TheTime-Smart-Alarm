@@ -2,6 +2,12 @@
 #include <TimeLib.h>
 #include <WiFiClient.h>
 #include <ESP8266WiFi.h>
+<<<<<<< HEAD
+=======
+#include <ESP8266WebServer.h>
+#include <WiFiUdp.h>
+ESP8266WebServer server(80);
+>>>>>>> refs/remotes/origin/webserver
 
 #define AP_SSID "Joshua's iPhone"  // AP Netzwerk
 
@@ -68,6 +74,7 @@ String _display() {
 }
 
 void loop() {
+  server.handleClient();
   
   int v = drehRead();
   if(v==0)
@@ -108,6 +115,11 @@ void setup() {
   setAlarmByWeather();
   
   setTime();
+  
+  if(WiFi.status() == WL_CONNECTED){
+    server.on("/", serverHomepage);
+    server.begin();  
+  }
   
   //TESTING
   ALARM_HOUR = 7;

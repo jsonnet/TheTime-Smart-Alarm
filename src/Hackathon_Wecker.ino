@@ -2,7 +2,10 @@
 #include <TimeLib.h>
 #include <WiFiClient.h>
 #include <ESP8266WiFi.h>
+
 #define AP_SSID "Joshua's iPhone"  // AP Netzwerk
+
+
 //** WEATHER **
 int OUT_TEMP = 0;
 String WEATHER_STATE;
@@ -59,6 +62,8 @@ String _display() {
 void loop() {
   
   int v = drehRead();
+  if(v==0)
+    v = readLightLevel() < 50 ? readLightLevel() + 2 : (double)(readLightLevel() / 100 * 5); //TODO
   matrixAnzeige(_display(), v);
   
   unsigned long currentMillisMinute = millis();

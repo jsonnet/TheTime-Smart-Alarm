@@ -36,6 +36,11 @@ void setAlarmByWeather() {
   WEATHER_STATE = " " + weather;
   Serial.println(WEATHER_STATE);
 
+  //   if(strcmp(s,"Scattered Showers")==0 || strcmp(s, "Showers")==0 || strcmp(s, "Snowy") == 0){
+  //    int gesammtminuten = (ALARM_HOUR*60+ALARM_MINUTE) - 30;
+  //    ALARM_MINUTE = gesammtminuten % 60;
+  //    Serial.println(ALARM_MINUTE);
+  //   }
 }
 
 String searchXML(String xml, String suchtext) {

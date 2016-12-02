@@ -37,11 +37,11 @@ void setAlarmByWeather() {
   Serial.println(WEATHER_STATE);
 
   // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms,
-//  if (strstr(weather.c_str(), "Cloudy") || strstr(weather.c_str(), "Rain") || strstr(weather.c_str(), "Breezy") || strstr(weather.c_str(), "Sunny") || strstr(weather.c_str(), "Thunderstorms")) {
-//    int gesammtminuten = (ALARM_HOUR * 60 + ALARM_MINUTE) - 30;
-//    ALARM_MINUTE = gesammtminuten % 60;
-//    Serial.println(ALARM_MINUTE);
-//  }
+  if (strstr(weather.c_str(), "Cloudy") || strstr(weather.c_str(), "Rain") || strstr(weather.c_str(), "Breezy") || strstr(weather.c_str(), "Sunny") || strstr(weather.c_str(), "Thunderstorms")) {
+    int gesammtminuten = (ALARM_HOUR * 60 + ALARM_MINUTE) - 30;
+    ALARM_MINUTE = gesammtminuten % 60;
+    Serial.println(ALARM_MINUTE);
+  }
 }
 
 String searchXML(String xml, String suchtext) {

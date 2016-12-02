@@ -4,10 +4,10 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
-ESP8266WebServer server(80);
+ESP8266WebServer server(8080);
 
 #define AP_SSID "Joshua's iPhone"  // AP Netzwerk
-#define AP_PASS "thisisapassword"  // PW Netzwerk
+#define AP_PASS "winnerofhackathon"  // PW Netzwerk
 
 //** GENERAL **
 const String HOME_ADDR [2] = {"49.239778", "6.69457"};
@@ -46,15 +46,15 @@ long intervalTime = 3600000; // 1 Stunde
 int HOUR;
 int MINUTE;
 long epochTime;
-char* date;
+char date[15];
 
 
 String _display() {
   if (!buttonPressed()) {
-    char* str;
+    char str[10];
     sprintf(str, "%d", MINUTE);
   
-    char* str2;
+    char str2[10];
     sprintf(str2, "%d", HOUR);
     
     strcat(str2, ":");
@@ -64,7 +64,7 @@ String _display() {
     strcat(str2, str);
     return str2;
   } else {
-    char* str3;
+    char str3[15];
     return (strcat(strcat(str3, " "), date) + WEATHER_STATE);
   }
 }

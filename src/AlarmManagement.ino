@@ -18,7 +18,7 @@ void setAlarmBySunrise() {
   String antwort;
 
   httpGET(host, cmd, antwort);
-
+  
   String s = searchXML(antwort, "sunrise");
 
   ALARM_HOUR = s[0] - '0'; //try .toInt() //only think about first pos because sunrise-hour always <10
@@ -31,22 +31,21 @@ void setAlarmByWeather() {
   String antwort;
 
   httpGET(host, cmd, antwort);
-
+  
   String weather = searchXML(antwort, "text");
   WEATHER_STATE = " " + weather;
   Serial.println(WEATHER_STATE);
 
-  const char* help = weather.c_str();
-
   // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms,
-  if (strstr(help, "Cloudy") || strstr(help, "Rain") || strstr(help, "Breezy") || strstr(help, "Sunny") || strstr(help, "Thunderstorms")) {
-    int gesammtminuten = (ALARM_HOUR * 60 + ALARM_MINUTE) - 30;
-    ALARM_MINUTE = gesammtminuten % 60;
-    Serial.println(ALARM_MINUTE);
-  }
+//  if (strstr(weather.c_str(), "Cloudy") || strstr(weather.c_str(), "Rain") || strstr(weather.c_str(), "Breezy") || strstr(weather.c_str(), "Sunny") || strstr(weather.c_str(), "Thunderstorms")) {
+//    int gesammtminuten = (ALARM_HOUR * 60 + ALARM_MINUTE) - 30;
+//    ALARM_MINUTE = gesammtminuten % 60;
+//    Serial.println(ALARM_MINUTE);
+//  }
 }
 
 String searchXML(String xml, String suchtext) {
+  float val = 0. / 0.;
   String valStr;
   int start, ende;
   suchtext = suchtext + '=' + '"';
@@ -56,7 +55,8 @@ String searchXML(String xml, String suchtext) {
     start = start + suchtext.length();
     ende =  xml.indexOf('"', start);
     valStr = xml.substring(start, ende);
-  } //else
-  // Serial.print("error - no such item: " + suchtext);
+    //val = valStr;
+  } else
+    Serial.print("error - no such item: " + suchtext);
   return valStr;
 }

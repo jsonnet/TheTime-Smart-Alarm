@@ -25,7 +25,7 @@ unsigned long sendNTPpacket(IPAddress& address) {
 }
 
 void setTime() {
-  connectWiFi();
+  //connectWiFi();
   WiFi.hostByName(ntpServerName, timeServerIP);
   sendNTPpacket(timeServerIP);
   delay(1000);
@@ -65,7 +65,7 @@ void setTime() {
     // Seconds
     //Serial.println(epoch % 60);
   }
-  closeWiFi();
+  //closeWiFi();
 }
 
 void _adjustTime(double sec){

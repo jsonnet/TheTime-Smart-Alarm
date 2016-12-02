@@ -23,7 +23,7 @@ const char INDEX_HTML[] =
 
 String randomstring;
 
-void serverHomepage() {
+void serverHomepage() { //
   if (server.hasArg("messagebox")) {
     randomstring = server.arg("messagebox");
   }

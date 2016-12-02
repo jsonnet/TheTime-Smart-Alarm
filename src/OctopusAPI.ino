@@ -44,7 +44,7 @@ void kitInit() {
   
 #ifdef AP_SSID
   matrixAnzeige("WiFi", 10);
-  connectWiFi()
+  connectWiFi();
 #endif
 }
 

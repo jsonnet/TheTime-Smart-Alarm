@@ -3,19 +3,32 @@
 #include <WiFiClient.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#include <FS.h>
 #include <WiFiUdp.h>
-ESP8266WebServer server(80);
+ESP8266WebServer server(8080);
 
 #define AP_SSID "Joshua's iPhone"  // AP Netzwerk
+#define AP_PASS "winnerofhackathon"  // PW Netzwerk
+
+//** GENERAL **
+// http://maps.google.com/maps/api/geocode/xml?address= or /json?address=bla+bla
+const String HOME_ADDR [2] = {"49.2397389", "6.694573"}; // Home address
+const String WORK_ADDR [2] = {"49.319104", "6.751235"}; // Work address
+
 //** WEATHER **
-int OUT_TEMP = 0;
-String WEATHER_STATE;
+int OUT_TEMP = 0; // Weather temperature
+String WEATHER_STATE; // State of weather [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms
 
 //** ALARM **
-int ALARM_HOUR;
-int ALARM_MINUTE;
-int RING_FOR = 60000;
-boolean alarmDays [7] = { false, true, true, true, true, true, false }; // SUN, MON ...
+int ALARM_HOUR; // Hour of alarm // *TODO change to array
+int ALARM_MINUTE; // Minute of alarm // *TODO change to array
+int RING_FOR = 60000; // Millisec of ring time
+boolean alarmDays [7] = { false, true, true, true, true, true, false }; // days the alarm goes off SUN, MON ...
+
+//** TRAFFIC **
+const String MAPS_HOST = "maps.googleapis.com/maps/api/distancematrix/json?origins=" + HOME_ADDR[0] + "," + HOME_ADDR[1] + "&destinations=" + WORK_ADDR[0] + "," + WORK_ADDR[1] + "&key=[key]"; //https://
+// response ["rows"][0]["elements"][0]["duration_in_traffic"]["value"]
+int ADD_TRAVEL_TIME = 0;
 
 //** TIME NTP **
 unsigned int localPort = 80;
@@ -35,8 +48,6 @@ long intervalTime = 3600000; // 1 Stunde
 int HOUR;
 int MINUTE;
 long epochTime;
-
-//TESTING PURPOSE
 char date[15];
 
 
@@ -64,6 +75,8 @@ void loop() {
   server.handleClient();
   
   int v = drehRead();
+  if(v==0)
+    v = readLightLevel() < 50 ? readLightLevel() + 2 : (double)(readLightLevel() / 100 * 5); //TODO
   matrixAnzeige(_display(), v);
   
   unsigned long currentMillisMinute = millis();
@@ -102,8 +115,11 @@ void setup() {
   setTime();
   
   if(WiFi.status() == WL_CONNECTED){
+    //SPIFFS.begin();
+    //File page = SPIFFS.open("/index.html", "r");
     server.on("/", serverHomepage);
-    server.begin();  
+    server.begin(); 
+    //SPIFFS.end();
   }
   
   //TESTING

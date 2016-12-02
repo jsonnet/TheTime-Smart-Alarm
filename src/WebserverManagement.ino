@@ -19,6 +19,8 @@ const char INDEX_HTML[] =
  "</body>"
 "</html>";
 
+// Use data uploaded to the ESP (file into folder data)
+
 String randomstring;
 
 void serverHomepage() {

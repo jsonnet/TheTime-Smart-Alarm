@@ -26,7 +26,6 @@ BME280 boschBME280;
 //** WiFi
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-#include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
 
 
@@ -44,6 +43,7 @@ void kitInit() {
   
 #ifdef AP_SSID
   matrixAnzeige("WiFi", 10);
+  //ESP.eraseConfig();
   connectWiFi();
 #endif
 }
@@ -74,24 +74,30 @@ void closeWiFi(){
   WiFi.forceSleepBegin();
 }
 
-//**** Unterprogramm http-Get Befehl absetzen und Antwort auswerten
-int httpGET(String host, String cmd, String &antwort) {
+void httpGET(String host, String url, String &antwort){
   WiFiClient client;
-  String text = "GET http://" + host + cmd + " HTTP/1.1\r\n";
-  text = text + "Host:" + host + "\r\n";
-  text = text + "Connection: close\r\n\r\n";
-  int ok = client.connect(host.c_str(), 80);
-  if (ok) {
-    client.print(text);
-    for (int tout = 1000; tout > 0 && client.available() == 0; tout--)
-      delay(10);
-    if (client.available() > 0)
-      while (client.available())
-        antwort = antwort + client.readStringUntil('\r');
-    else ok = 0;
-    client.stop();
+  const int httpPort = 80;
+  if (!client.connect(host.c_str(), httpPort)) {
+    Serial.println("connection failed");
+    return;
   }
-  return ok;
+  client.print(String("GET ") + host + url + " HTTP/1.1\r\n" +
+               "Host: " + host + "\r\n" + 
+               "Connection: close\r\n\r\n");
+  //Serial.println("request sent");
+  unsigned long timeout = millis();
+  while (client.available() == 0) {
+    if (millis() - timeout > 5000) {
+      Serial.println(">>> Client Timeout !");
+      client.stop();
+      return;
+    }
+  }
+  while(client.available()){
+    String line = client.readStringUntil('\r');
+    //Serial.print(line);
+    antwort = line;
+  }
 }
 
 //**** Unterprogramme auslesen des Bosch-Sensors

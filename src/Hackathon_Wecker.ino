@@ -16,7 +16,7 @@ const String HOME_ADDR [2] = {"49.2397389", "6.694573"}; // Home address
 const String WORK_ADDR [2] = {"49.319104", "6.751235"}; // Work address
 
 //** WEATHER **
-int OUT_TEMP = 0; // Weather temperature
+double OUT_TEMP = 0; // Weather temperature
 String WEATHER_STATE; // State of weather [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms
 
 //** ALARM **
@@ -66,8 +66,9 @@ String _display() {
     strcat(str2, str);
     return str2;
   } else {
-    char str3[15];
-    return (strcat(strcat(str3, " "), date) + WEATHER_STATE);
+    char str3[50];
+    //Serial.println(strcat(strcat(strcat(strcat(strcat(str3, " "), date), " "), WEATHER_STATE.c_str()), " ") + String(OUT_TEMP) + " C");
+    return strcat(strcat(strcat(strcat(strcat(str3, " "), date), " "), WEATHER_STATE.c_str()), " ") + String(OUT_TEMP) + " C";
   }
 }
 
@@ -109,20 +110,23 @@ void loop() {
 void setup() {
   kitInit();
 
-  //setAlarmBySunrise();
-  setAlarmByWeather();
+  delay(2500);
+
+  //getWoeid(); // Use for getting location id
+  
+  getWeatherData();
+  getTempData();
+  
+  //setAlarmBySunrise(); // These needs to work w/ webinterface
+  //setAlarmByWeather();
   
   setTime();
   
   if(WiFi.status() == WL_CONNECTED){
     //SPIFFS.begin();
     //File page = SPIFFS.open("/index.html", "r");
-    server.on("/", serverHomepage);
-    server.begin(); 
+    //server.on("/", serverHomepage);
+    //server.begin(); 
     //SPIFFS.end();
   }
-  
-  //TESTING
-  ALARM_HOUR = 7;
-  ALARM_MINUTE = 30;
 }

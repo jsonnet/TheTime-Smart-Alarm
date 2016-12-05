@@ -26,18 +26,8 @@ void setAlarmBySunrise() {
 }
 
 void setAlarmByWeather() {
-  String cmd = "/v1/public/yql?q=select%20item.condition.text%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text='Saarlouis, de')\r\n";
-  String host = "query.yahooapis.com";
-  String antwort;
-
-  httpGET(host, cmd, antwort);
-  
-  String weather = searchXML(antwort, "text");
-  WEATHER_STATE = " " + weather;
-  Serial.println(WEATHER_STATE);
-
   // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms,
-  if (strstr(weather.c_str(), "Cloudy") || strstr(weather.c_str(), "Rain") || strstr(weather.c_str(), "Breezy") || strstr(weather.c_str(), "Sunny") || strstr(weather.c_str(), "Thunderstorms")) {
+  if (strstr(WEATHER_STATE.c_str(), "Cloudy") || strstr(WEATHER_STATE.c_str(), "Rain") || strstr(WEATHER_STATE.c_str(), "Breezy") || strstr(WEATHER_STATE.c_str(), "Sunny") || strstr(WEATHER_STATE.c_str(), "Thunderstorms")) {
     int gesammtminuten = (ALARM_HOUR * 60 + ALARM_MINUTE) - 30;
     ALARM_MINUTE = gesammtminuten % 60;
     Serial.println(ALARM_MINUTE);
@@ -45,7 +35,6 @@ void setAlarmByWeather() {
 }
 
 String searchXML(String xml, String suchtext) {
-  float val = 0. / 0.;
   String valStr;
   int start, ende;
   suchtext = suchtext + '=' + '"';
@@ -55,7 +44,6 @@ String searchXML(String xml, String suchtext) {
     start = start + suchtext.length();
     ende =  xml.indexOf('"', start);
     valStr = xml.substring(start, ende);
-    //val = valStr;
   } else
     Serial.print("error - no such item: " + suchtext);
   return valStr;

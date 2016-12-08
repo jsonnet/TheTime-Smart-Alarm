@@ -45,7 +45,6 @@ void setTime() {
     // Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
     unsigned long epoch = secsSince1900 - seventyYears;
 
-    epochTime = epoch;
     sprintf(date, "%d", day(epoch)); // dayStr(day(epoch) || dayShortStr(day(epoch) || weekday(epoch);
     strcat(date, ".");
     char helper[2];
@@ -56,6 +55,7 @@ void setTime() {
 
     // Hours
     //Serial.print((epoch  % 86400L) / 3600);
+    epoch += TIMEZONE * 3600;
     HOUR = (epoch  % 86400L) / 3600;
     
     // Minutes
@@ -64,6 +64,7 @@ void setTime() {
 
     // Seconds
     //Serial.println(epoch % 60);
+    epochTime = epoch;
   }
   //closeWiFi();
 }

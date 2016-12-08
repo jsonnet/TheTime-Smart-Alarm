@@ -42,7 +42,7 @@ void kitInit() {
   TSL2561.init();
   
 #ifdef AP_SSID
-  matrixAnzeige("WiFi", 10);
+  matrixAnzeige("Hello", 6);
   //ESP.eraseConfig();
   connectWiFi();
 #endif
@@ -87,7 +87,7 @@ void httpGET(String host, String url, String &antwort){
   //Serial.println("request sent");
   unsigned long timeout = millis();
   while (client.available() == 0) {
-    if (millis() - timeout > 5000) {
+    if (millis() - timeout > 6000) {
       Serial.println(">>> Client Timeout !");
       client.stop();
       return;

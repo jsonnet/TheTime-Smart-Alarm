@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SmartWatch</title>
+	<meta charset="utf-8" />
+	<style>
+		body {
+			background-color: #707884;
+		}
+
+		.keyword {
+			display: block;
+			font-size: 18px;
+			font-weight: bold;
+		}
+		.inline-block {
+			display: inline-block;
+		}
+
+		h1 {
+			color: #00ccff;
+			text-align: center;
+			font-family: "Arial", serif;
+		}
+
+		h2 {
+			text-align: center;
+		}
+
+		.center {
+			text-align: center;
+		}
+
+		#timesettings {
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<h1>The Time Smart Alarm</h1>
+	</header>
+	<div id="connectionoptions" class="center">
+		<h2>Connection</h2>
+
+		<form action="/" method="post">
+			<div class="keyword">IP: </div>
+			<input type="text" name="ip"><br>
+
+			<div class="keyword">Network name: </div>
+			<input type="text" name="networkname"><br>
+
+			<div class="keyword">Password: </div>
+			<input type="text" name="password"><br>
+
+			<input style="margin-top: 8px;" type="submit" value="Confirm changes" />
+		</form>
+		<hr>
+	</div>
+
+	<div id="weatersettings" class="center">
+		<h2> Weatheroptions </h2>
+		<form action="/" method="post">
+			<div class="keyword">Home address: </div>
+			<input type="text" name="location"><br>
+
+			<div class="keyword">Work address: </div>
+			<input type="text" name="worklocation"><br>
+
+			<input style="margin-top: 8px;" type="submit" value="Confirm changes" />
+		</form>
+
+		<hr>
+	</div>
+
+
+	<h2>Timesettings</h2>
+
+	<div id="timesettings">
+		<div class="alarm" id="default_alarm">
+			<p>Default Alarm</p>
+
+			<form action="/" method="post">
+				<div class="keyword" style="display: inline-block">Days: </div>
+				<input type="checkbox" name="monday" value="Monday">Monday
+				<input type="checkbox" name="tuesday" value="tuesday">Tuesday
+				<input type="checkbox" name="wednesday" value="wednesday">Wednesday
+				<input type="checkbox" name="thursday" value="thursday">Thursday
+				<input type="checkbox" name="friday" value="friday">Friday
+				<input type="checkbox" name="saturday" value="saturday">Saturday
+				<input type="checkbox" name="sunday" value="sunday">Sunday
+				<br>
+				<div class="keyword" style="display: inline-block">Alarmtime: </div>
+				<input type="time" name="alarmtime1"><br>
+
+				<div class="inline-block">
+					<div class="keyword" style="display: inline-block">Wake at sunset? </div>
+					<input type="radio" name="sunset" value="yes">yes
+					<input type="radio" name="sunset" value="no">no
+				</div><br>
+
+				<div class="inline-block">
+					<div class="keyword" style="display: inline-block">Enable snooze? </div>
+					<input type="radio" name="sunset" value="yes">yes
+					<input type="radio" name="sunset" value="no">no
+				</div><br>
+
+				<div class="inline-block">
+					<div class="keyword" style="display: inline-block">Consider traffic jams? </div>
+					<input type="radio" name="sunset" value="yes">yes
+					<input type="radio" name="sunset" value="no">no
+				</div><br>
+
+				<button type="button" name="addAlarm">add alarm</button>
+				<input style="margin-top: 8px;" type="submit" value="Confirm changes" />
+			</form>
+		</div>
+		<hr>
+	</div>
+</body>
+<html>

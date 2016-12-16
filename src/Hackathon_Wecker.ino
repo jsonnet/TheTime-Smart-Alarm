@@ -6,7 +6,7 @@
 #include <ESP8266WebServer.h>
 #include <FS.h>
 #include <WiFiUdp.h>
-ESP8266WebServer server(8080);
+ESP8266WebServer server(80);
 
 #define AP_SSID "Joshua's iPhone"  // AP Netzwerk
 #define AP_PASS "winnerofhackathon"  // PW Netzwerk
@@ -129,10 +129,8 @@ void setup() {
   //setAlarmByWeather();
   
   if(WiFi.status() == WL_CONNECTED){
-    //SPIFFS.begin();
-    //File page = SPIFFS.open("/index.html", "r");
-    //server.on("/", serverHomepage);
-    //server.begin(); 
-    //SPIFFS.end();
+    Serial.println("Webserver starting");
+  	server.on("/", serverHomepage);
+    server.begin();
   }
 }

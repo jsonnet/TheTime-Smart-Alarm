@@ -48,6 +48,7 @@ int frequency(char note) {
   return(0);
 }
 
+
 void setAlarmBySunrise() {
   ALARM_HOUR = SUNRISE[0] - '0'; //try .toInt() //only think about first pos because sunrise-hour always <10
   ALARM_MINUTE =  (10 * (SUNRISE[2] - '0')) + (SUNRISE[3] - '0');

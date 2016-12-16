@@ -1,31 +1,32 @@
-const char INDEX_HTML[] =
-"<!DOCTYPE HTML>"
-"<html>"
- "<head>"
-   "<title>Der Wecker</title>"
-   "<style>"
-     "\"body { background-color: #808080; font-family: Arial, Helvetica, Sans-Serif; Color: #000000; }\""
-   "</style>"
- "</head>"
- "<body>"
-   "<h1>Der Wecker</h1>"
-   "<FORM action=\"/\" method=\"post\">"
-    "<P>"
-      "Test123<br>"
-      "<INPUT type=\"text\" name=\"messagebox\"><br>"
-      "<INPUT type=\"submit\" value=\"Absenden\">"
-    "</P>"
-   "</FORM>"
- "</body>"
-"</html>";
-
 // Use data uploaded to the ESP (file into folder data)
 
-String randomstring;
+String network[3];
+String weather[2];
 
-void serverHomepage() {
-  if (server.hasArg("messagebox")) {
-    randomstring = server.arg("messagebox");
+void serverHomepage() { //
+  if (server.hasArg("ip") && server.hasArg("networkname") && server.hasArg("password")) {
+    network[0] = server.arg("ip");
+    network[1] = server.arg("networkname");
+    network[2] = server.arg("password");
   }
-  server.send(200, "text/html", INDEX_HTML);
+  if (server.hasArg("location") && server.hasArg("worklocation")) {
+    weather[0] = server.arg("location");
+    weather[1] = server.arg("worklocation");
+  }
+  //TODO add alarm things
+  server.send(200, "text/html", getPage()); //change here to file
 }
+
+String getPage(){
+  String s = " ";
+  SPIFFS.begin();
+  //SPIFFS.format(); //TODO comment out, ONLY needs to happen once
+  File f = SPIFFS.open("/index.html", "r");
+  if(f){
+    s = f.readString();
+    f.close();
+  }
+  SPIFFS.end();
+  return s;
+}
+

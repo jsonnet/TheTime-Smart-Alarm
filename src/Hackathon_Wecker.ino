@@ -5,7 +5,7 @@
 #include <ESP8266WebServer.h>
 #include <FS.h>
 #include <WiFiUdp.h>
-ESP8266WebServer server(8080);
+ESP8266WebServer server(80);
 
 #define AP_SSID "Joshua's iPhone"  // AP Netzwerk
 #define AP_PASS "winnerofhackathon"  // PW Netzwerk
@@ -105,16 +105,9 @@ void setup() {
   setTime();
   
   if(WiFi.status() == WL_CONNECTED){
-    SPIFFS.begin();
-	SPIFFS.format(); //TODO comment out, ONLY needs to happen once
-    File webpage = SPIFFS.open("/index.html", "r");
-    if(f){
-	  String s = f.readString(); // find method, org: readStringUntil('\n')
-	  server.on("/", serverHomepage); //TODO redo : serverHomepage?
-      server.begin();
-	  f.close();
-    }
-    SPIFFS.end();
+    Serial.println("Webserver starting");
+  	server.on("/", serverHomepage);
+    server.begin();
   }
   
   //TESTING

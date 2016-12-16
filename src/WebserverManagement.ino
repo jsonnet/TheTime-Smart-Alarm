@@ -1,9 +1,10 @@
-// Use data uploaded to the ESP (file into folder data)
+// Use data uploaded to the ESP (file into folder data & Tools -> ESP Sketch Uploader)
 
 String network[3];
 String weather[2];
 
-void serverHomepage() { //
+void serverHomepage() {
+  server.arg("ip") = "192.168.178.1";
   if (server.hasArg("ip") && server.hasArg("networkname") && server.hasArg("password")) {
     network[0] = server.arg("ip");
     network[1] = server.arg("networkname");
@@ -18,15 +19,15 @@ void serverHomepage() { //
 }
 
 String getPage(){
-  String s = " ";
-  SPIFFS.begin();
-  //SPIFFS.format(); //TODO comment out, ONLY needs to happen once
-  File f = SPIFFS.open("/index.html", "r");
+  String s = " ";         // A String
+  SPIFFS.begin();         // Init EPROM filesystem
+  //SPIFFS.format();      // ONLY needs to happen once
+  File f = SPIFFS.open("/index.html", "r"); // Open file
   if(f){
-    s = f.readString();
-    f.close();
+    s = f.readString();   // Read file
+    f.close();            // Close file, needs to happen!
   }
-  SPIFFS.end();
-  return s;
+  SPIFFS.end();           // Important close filesystem
+  return s;               // Return whole file
 }
 

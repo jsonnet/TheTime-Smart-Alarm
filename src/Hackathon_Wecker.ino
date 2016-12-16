@@ -8,29 +8,29 @@
 #include <WiFiUdp.h>
 ESP8266WebServer server(80);
 
-#define AP_SSID "Joshua's iPhone"  // AP Netzwerk
-#define AP_PASS "winnerofhackathon"  // PW Netzwerk
+#define AP_SSID "Joshua's iPhone"               // AP Network
+#define AP_PASS "winnerofhackathon"             // PW Network
 
 //** GENERAL **
 // http://maps.google.com/maps/api/geocode/xml?address= or /json?address=bla+bla
-String HOME_ADDR [2] = {"49.2397389", "6.694573"}; // Home address
-String WORK_ADDR [2] = {"49.319104", "6.751235"}; // Work address
+String HOME_ADDR [2] = {"49.2397389", "6.694573"};    // Home address
+String WORK_ADDR [2] = {"49.319104", "6.751235"};     // Work address
 
 //** WEATHER **
-int OUT_TEMP = 0; // Weather temperature
-String WEATHER_STATE; // State of weather [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear
-String SUNRISE; //Sunrise time
+int OUT_TEMP = 0;                               // Weather temperature
+String WEATHER_STATE;                           // State of weather [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear
+String SUNRISE;                                 //Sunrise time
 
 //** ALARM **
-int ALARM_HOUR = 23; // Hour of alarm // *TODO change to array
-int ALARM_MINUTE = 59; // Minute of alarm // *TODO change to array
-int RING_FOR = 60000; // Millisec of ring time
-boolean alarmDays [7] = { false, true, true, true, true, true, false }; // days the alarm goes off SUN, MON ...
+int ALARM_HOUR = 23;                            // Hour of alarm // *TODO change to array for multiple
+int ALARM_MINUTE = 59;                          // Minute of alarm // *TODO change to array
+int RING_FOR = 60000;                           // Millisec of ring time
+boolean alarmDays [7] = { false, true, true, true, true, true, false };     // days the alarm goes off SUN, MON ...
 
 //** TRAFFIC **
 const String MAPS_HOST = "maps.googleapis.com/maps/api/distancematrix/xml?origins=" + HOME_ADDR[0] + "," + HOME_ADDR[1] + "&destinations=" + WORK_ADDR[0] + "," + WORK_ADDR[1] + "&key=[key]";
 // response ["rows"][0]["elements"][0]["duration_in_traffic"]["value"]
-int ADD_TRAVEL_TIME = 0;
+int ADD_TRAVEL_TIME = 0;                        // Additional time for travel and traffic
 
 //** TIME NTP **
 unsigned int localPort = 80;
@@ -42,9 +42,9 @@ WiFiUDP udp;
 
 //** TIMING **
 long previousMillisMinute = 0;
-long intervalMinute = 60000; // 1 Minute
+long intervalMinute = 60000;                    // 1 minute
 long previousMillisTime = 0;
-long intervalTime = 3600000; // 1 Stunde
+long intervalTime = 3600000;                    // 1 hour
 
 //** ACTUAL TIME **
 int HOUR;
@@ -58,37 +58,36 @@ String _display() {
   if (!buttonPressed()) {
     char str[10];
     sprintf(str, "%d", MINUTE);
-  
+
     char str2[10];
     sprintf(str2, "%d", HOUR);
-    
+
     strcat(str2, ":");
     if (MINUTE < 10) {
       strcat(str2, "0");
     }
     strcat(str2, str);
-    return str2;
+    return str2;        // Return HOUR : MINUTES
   } else {
     char str3[50] = {0};
-    memset(str3, 0, sizeof(str3));
-    //Serial.println(strcat(strcat(strcat(strcat(strcat(str3, " "), date), " "), WEATHER_STATE.c_str()), " ") + String(OUT_TEMP) + " C");
-    return strcat(strcat(strcat(strcat(strcat(str3, " "), date), " "), WEATHER_STATE.c_str()), " ") + String(OUT_TEMP) + "C";
+    memset(str3, 0, sizeof(str3));        // Clear array
+    return strcat(strcat(strcat(strcat(strcat(str3, " "), date), " "), WEATHER_STATE.c_str()), " ") + String(OUT_TEMP) + "C";       // Return DATE WEATHER TEMP
   }
 }
 
 void loop() {
-  server.handleClient();
-  
-  int v = round(pow(1.05, drehRead())); //expon. wachstum ? oder besser betrag von expon. verkleinerung
-  Serial.println(v);
-  if(drehRead()==0)
+  server.handleClient();                        //webserver handle clients
+
+  //** Brightness of the display
+  int v = round(pow(1.05, rotaryRead()));       //expon. wachstum ? oder besser betrag von expon. verkleinerung
+  if (rotaryRead() == 0)
     v = readLightLevel() < 50 ? readLightLevel() + 2 : (double)(readLightLevel() / 100 * 5); //TODO
-  matrixAnzeige(_display(), v);
-  
+  matrixAnzeige(_display(), v);                 // Draw information of screen
+
+  //** every minute do
   unsigned long currentMillisMinute = millis();
   if (currentMillisMinute - previousMillisMinute >= intervalMinute) {
-    _adjustTime((currentMillisMinute - previousMillisMinute - intervalMinute) / 1000);
-    Serial.println((currentMillisMinute - previousMillisMinute - intervalMinute) / 1000);
+    _adjustTime((currentMillisMinute - previousMillisMinute - intervalMinute) / 1000);    // Adjust time by lost one over updating delay
     MINUTE++;
     epochTime += 60;
     if (MINUTE >= 60) {
@@ -98,39 +97,41 @@ void loop() {
       else
         HOUR = 0;
     }
-    previousMillisMinute = currentMillisMinute;
+    previousMillisMinute = currentMillisMinute; // Reset timer
   }
-  
+
+  //** Check for alarm
   if (HOUR == ALARM_HOUR && MINUTE == ALARM_MINUTE) {
     alarm();
   }
 
+  //** Reupdate time from udp server every hour
   unsigned long currentMillisTime = millis();
   if (currentMillisTime - previousMillisTime >= intervalTime) {
     setTime();
-    previousMillisTime = currentMillisTime;
+    previousMillisTime = currentMillisTime;     // Reset timer
   }
 }
 
 void setup() {
-  kitInit();
+  kitInit();                  //Init board
 
-  delay(2500);
+  delay(2000);                //Wait for delay
 
   if (WiFi.status() == WL_CONNECTED) {
-    //getWoeid(); // Use for getting location id
-    getWeatherData();
-    getTempData();
-    getSunriseData();
-    setTime();
+    //getWoeid();             // Use for getting location id
+    getWeatherData();         // Store current weather data
+    getTempData();            // Store current temperatur
+    getSunriseData();         // Store sunrise time
+    setTime();                // Set time with udp
   }
-  
+
   //setAlarmBySunrise(); // These needs to work w/ webinterface
-  //setAlarmByWeather();
-  
-  if(WiFi.status() == WL_CONNECTED){
+  //setAlarmByWeather(); // Needs to be removed here
+
+  if (WiFi.status() == WL_CONNECTED) {
     Serial.println("Webserver starting");
-  	server.on("/", serverHomepage);
-    server.begin();
+    server.on("/", serverHomepage);     //Set webserver
+    server.begin();                     //Init webserver
   }
 }

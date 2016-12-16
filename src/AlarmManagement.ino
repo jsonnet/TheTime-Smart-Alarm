@@ -55,6 +55,8 @@ void setAlarmBySunrise() {
 }
 
 void setAlarmByWeather() {
+  // deprecated needs complete rewrite better use of if statement (switch don't work)
+  
   // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear
   if (strstr(WEATHER_STATE.c_str(), "Cloudy") || strstr(WEATHER_STATE.c_str(), "Rain") || strstr(WEATHER_STATE.c_str(), "Breezy") || strstr(WEATHER_STATE.c_str(), "Sunny") || strstr(WEATHER_STATE.c_str(), "Thunderstorms")) {
     int gesammtminuten = (ALARM_HOUR * 60 + ALARM_MINUTE) - 30;

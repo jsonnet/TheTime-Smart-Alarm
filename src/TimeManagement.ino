@@ -45,21 +45,18 @@ void setTime() {
     // Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
     unsigned long epoch = secsSince1900 - seventyYears;
 
-    sprintf(date, "%d", day(epoch)); // dayStr(day(epoch) || dayShortStr(day(epoch) || weekday(epoch);
+    sprintf(date, "%d", day(epoch));        // dayStr(day(epoch) || dayShortStr(day(epoch) || weekday(epoch);
     strcat(date, ".");
     char helper[2];
-    sprintf(helper, "%d", month(epoch)); // monthStr(month(epoch)) || monthShortStr(month(epoch))
+    sprintf(helper, "%d", month(epoch));    // monthStr(month(epoch)) || monthShortStr(month(epoch))
     strcat(date, helper);
     strcat(date, ".");
-    //Serial.println(hour(epoch) + "," + minute(epoch));
 
     // Hours
-    //Serial.print((epoch  % 86400L) / 3600);
     epoch += TIMEZONE * 3600;
     HOUR = (epoch  % 86400L) / 3600;
     
     // Minutes
-    //Serial.print((epoch  % 3600) / 60);
     MINUTE = (epoch  % 3600) / 60;
 
     // Seconds
@@ -73,11 +70,9 @@ void _adjustTime(double sec){
   epochTime += sec;
   
   // Hours
-  //Serial.print((timet  % 86400L) / 3600);
   HOUR = (epochTime  % 86400L) / 3600;
   
   // Minutes
-  //Serial.print((timet  % 3600) / 60);
   MINUTE = (epochTime  % 3600) / 60;
 
   // Seconds

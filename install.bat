@@ -10,9 +10,9 @@ echo or choose to open the main file in the project
 echo %cd%
 
 mkdir "%UserProfile%\Desktop\TheTime"
-mklink "%UserProfile%\Desktop\TheTime\Hackathon_Wecker" "src"
-mklink "%UserProfile%\Desktop\TheTime\libraries" "libraries"
-mklink "%UserProfile%\Desktop\TheTime\tools" "tools"
+mklink "%UserProfile%\Desktop\TheTime\Hackathon_Wecker" "path\src"
+mklink "%UserProfile%\Desktop\TheTime\libraries" "path\libraries"
+mklink "%UserProfile%\Desktop\TheTime\tools" "path\tools"
 pause
 
 @echo on

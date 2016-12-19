@@ -16,10 +16,6 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(2, 13, NEO_RGBW + NEO_KHZ800);
 #include <Adafruit_IS31FL3731.h>
 Adafruit_IS31FL3731_Wing matrix = Adafruit_IS31FL3731_Wing();
 
-//** Bosch environment
-#include <SparkFunBME280.h>
-BME280 boschBME280;
-
 //** Grove Sensor (Digital Light)
 #include <Digital_Light_TSL2561.h>
 
@@ -34,10 +30,9 @@ void kitInit() {
   Wire.begin();                   //Init Wire
   if (Wire.status() != I2C_OK) Serial.println("Something wrong with I2C");
   pixels.begin();                 //Init LEDs
-  //boschBME280init();            //Init Bosch Sensors (curr disab)
   matrix.begin();                 //Init LED Matrix
   TSL2561.init();                 //Init Digital Light Sensor
-  
+
 #ifdef AP_SSID
   matrixAnzeige("Hello", 6);      //Starting screen
   //ESP.eraseConfig();            //When failing activate
@@ -79,7 +74,7 @@ void httpGET(String host, String url, String &antwort){
     return;
   }
   client.print(String("GET ") + host + url + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" + 
+               "Host: " + host + "\r\n" +
                "Connection: close\r\n\r\n");
   unsigned long timeout = millis();
   while (client.available() == 0) {
@@ -89,31 +84,11 @@ void httpGET(String host, String url, String &antwort){
       return;
     }
   }
-  while(client.available()){
+  while(client.available()) {
     String line = client.readStringUntil('\r');
     antwort = line;
   }
 }
-
-//**** Bosch Sensors
-void boschBME280init() {
-  boschBME280.settings.runMode = 3; //  1 forced, 3, Normal mode
-  boschBME280.settings.tempOverSample  = 4;
-  boschBME280.settings.pressOverSample = 4;
-  boschBME280.settings.humidOverSample = 4;
-  boschBME280.begin();
-}
-
-float temperaturRead() {
-  return boschBME280.readTempC();            // Celsius
-}
-float luftdruckRead() {
-  return boschBME280.readFloatPressure();    // Pa
-}
-float luftfeuchteRead() {                    // Percent
-  return boschBME280.readFloatHumidity();
-}
-
 
 //**** Charlieplex Matrix //** pwm 0 - 255
 void matrixAnzeige(String text, int pwm) {

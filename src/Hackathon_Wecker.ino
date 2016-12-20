@@ -22,10 +22,10 @@ String WEATHER_STATE;                           // State of weather [*] Cloudy, 
 String SUNRISE;                                 //Sunrise time
 
 //** ALARM **
-int ALARM_HOUR = 23;                            // Hour of alarm // *TODO change to array for multiple
-int ALARM_MINUTE = 59;                          // Minute of alarm // *TODO change to array
-int RING_FOR = 60000;                           // Millisec of ring time
-boolean alarmDays [7] = { false, true, true, true, true, true, false };     // days the alarm goes off SUN, MON ...
+int ALARM_HOUR[3] = {23,23,23};                 // Hour of alarm // *TODO change to array for multiple
+int ALARM_MINUTE[3] = {59,59,59};               // Minute of alarm // *TODO change to array
+const int RING_FOR = 60000;                     // Millisec of ring time
+boolean alarmDays [7] = { false, false, false, false, false, false, false };     // days the alarm goes off SUN, MON ...
 
 //** TRAFFIC **
 const String MAPS_HOST = "maps.googleapis.com/maps/api/distancematrix/xml?origins=" + HOME_ADDR[0] + "," + HOME_ADDR[1] + "&destinations=" + WORK_ADDR[0] + "," + WORK_ADDR[1] + "&key=[key]";
@@ -33,7 +33,7 @@ const String MAPS_HOST = "maps.googleapis.com/maps/api/distancematrix/xml?origin
 int ADD_TRAVEL_TIME = 0;                        // Additional time for travel and traffic
 
 //** TIME NTP **
-unsigned int localPort = 80;
+const unsigned int localPort = 80;
 IPAddress timeServerIP;
 const char* ntpServerName = "pool.ntp.org";
 const int NTP_PACKET_SIZE = 48;
@@ -42,9 +42,9 @@ WiFiUDP udp;
 
 //** TIMING **
 long previousMillisMinute = 0;
-long intervalMinute = 60000;                    // 1 minute
+const long intervalMinute = 60000;               // 1 minute
 long previousMillisTime = 0;
-long intervalTime = 3600000;                    // 1 hour
+const long intervalTime = 3600000;               // 1 hour
 
 //** ACTUAL TIME **
 int HOUR;
@@ -115,8 +115,9 @@ void loop() {
 
 void setup() {
   kitInit();                  //Init board
+  readFromSettings();         //Get settings
 
-  delay(2000);                //Wait for delay
+  delay(1000);                //Wait for delay
 
   if (WiFi.status() == WL_CONNECTED) {
     //getWoeid();             // Use for getting location id

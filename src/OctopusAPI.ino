@@ -46,7 +46,7 @@ void connectWiFi(){
   WiFi.begin(AP_SSID, AP_PASS);   //Start wifi connection
   changeRightPixel(20, 0, 0);     //Status LED
   for(int i = 0; i <= 10 && WiFi.status() != WL_CONNECTED; i++)
-    delay(1000);
+    delay(1500);
   if (WiFi.status() == WL_CONNECTED) {
     changeRightPixel(0, 0, 5);
     udp.begin(localPort);         //Init time server port

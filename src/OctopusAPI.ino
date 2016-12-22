@@ -100,7 +100,8 @@ void httpGET(String host, String url, String &antwort){
 //**** Charlieplex Matrix //** pwm 0 - 255
 void matrixAnzeige(String text, int pwm) {
   int anzahlPixel = (text.length()) * 6;
-  matrix.setTextColor(pwm < 255 ? 255 : pwm);        //Color brightness
+ // matrix.setTextColor(pwm < 255 ? 255 : pwm);        //Color brightness
+  matrix.setTextColor(pwm);
   matrix.setTextWrap(false);
   for (int x = 1; x >= -anzahlPixel; x--) { // Scroll text
     matrix.clear();

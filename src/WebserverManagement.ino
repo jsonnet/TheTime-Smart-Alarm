@@ -16,6 +16,7 @@ void serverHomepage() {
   }
   //TODO add alarm things
 
+  saveToSettings(); // Save to Settings after getting data
   server.send(200, "text/html", getPage()); //change here to file
 }
 

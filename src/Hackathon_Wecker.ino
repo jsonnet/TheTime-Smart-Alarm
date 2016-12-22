@@ -119,7 +119,7 @@ void loop() {
 void setup() {
   kitInit();                  //Init board
   readFromSettings();         //Get settings
-
+  
   delay(1000);                //Wait for delay
 
   if (WiFi.status() == WL_CONNECTED) {
@@ -130,8 +130,7 @@ void setup() {
     setTime();                // Set time with udp
   }
 
-  //setAlarmBySunrise(); // These needs to work w/ webinterface
-  //setAlarmByWeather(); // Needs to be removed here
+  //TODO: Set the settings from webinterface (alarm)
 
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println("Webserver starting");

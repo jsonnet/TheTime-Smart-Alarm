@@ -50,9 +50,10 @@ int frequency(char note) {
 
 
 void setAlarmBySunrise() { //TODO Add to all 3 alarms
-  ALARM_HOUR[0] = SUNRISE[0] - '0'; //try .toInt() //only think about first pos because sunrise-hour always <10
-  ALARM_MINUTE[0] =  (10 * (SUNRISE[2] - '0')) + (SUNRISE[3] - '0');
+  ALARM_HOUR[0] = SUNRISE - '0'; //try .toInt() //only think about first pos because sunrise-hour always <10
+  ALARM_MINUTE[0] =  (10 * (SUNRISE - '0')) + (SUNRISE - '0');
 }
+
 
 void setAlarmByWeather() { //TODO Add to all 3 alarms
   //TODO deprecated needs complete rewrite better use of if statement (switch don't work)

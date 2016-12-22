@@ -16,7 +16,7 @@ void serverHomepage() {
   }
   //TODO add alarm things
 
-  saveToSettings();
+  saveToSettings(); // Save to Settings after getting data
   server.send(200, "text/html", getPage()); //change here to file
 }
 
@@ -56,7 +56,7 @@ void readFromSettings() {
 
   while (settingsFile.available()) { // reads whole file
     String line = settingsFile.readStringUntil('\n'); // Each line
-    line = strtok(line.c_str(), new char[] {"="}); // Split line at '=' //XXX help why no working with "=" ?
+    //line = strtok(line.c_str(), new char[] {"="}); // Split line at '=' //XXX help why no working with "=" ?
     Serial.println(line); //TODO store somewhere
   }
 

@@ -14,14 +14,24 @@ void getWeatherData() {
   String antwort;
 
   httpGET(host, cmd, antwort);
-  
+
   String weather = searchXML(antwort, "text");
   WEATHER_STATE = weather;
 
+  //TODO try icons
   // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear
-  if (strstr(weather.c_str(), "Cloudy") || strstr(weather.c_str(), "Rain") || strstr(weather.c_str(), "Breezy") || strstr(weather.c_str(), "Sunny") || strstr(weather.c_str(), "Thunderstorms")) {
-    //maybe shorten or show icon
-  }
+  if (strstr(weather.c_str(), "Cloudy") )
+    WEATHER_STATE = "Cloudy";
+  else if (strstr(weather.c_str(), "Rain"))
+    WEATHER_STATE = "Rain";
+  else if (strstr(weather.c_str(), "Breezy"))
+    WEATHER_STATE = "Breezy";
+  else if (strstr(weather.c_str(), "Sunny"))
+    WEATHER_STATE = "Sunny";
+  else if (strstr(weather.c_str(), "Thunderstorms"))
+    WEATHER_STATE = "Thunder";
+  else if (strstr(weather.c_str(), "Clear"))
+    WEATHER_STATE = "Clear";
 }
 
 void getTempData(){
@@ -35,7 +45,6 @@ void getTempData(){
   double temper = 32;
   temper = strtod(searchXML(antwort, "temp").c_str(), NULL);
   temper = (temper - 32) / 1.8;
-  //temper = round(temper * 10.0)/10;
   OUT_TEMP = temper;
   Serial.println(OUT_TEMP);
 }
@@ -46,7 +55,6 @@ void getSunriseData(){
   String antwort;
 
   httpGET(host, cmd, antwort);
-  
+
   SUNRISE = searchXML(antwort, "sunrise");
 }
-

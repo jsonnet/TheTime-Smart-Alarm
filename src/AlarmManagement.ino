@@ -1,20 +1,20 @@
 void alarm() {
   Serial.println("Alarm");
-  do{
+  do {
     tone(15, 300, 500);
     delay(500);
     tone(15, 500, 500);
     delay(500);
   } while(!(digitalRead(2) == LOW));
-  
+
   noTone(15);
-  
+
   while ((digitalRead(2) == LOW)) {
     changeLeftPixel(40, 0, 0);
     delay(2000);
     changeLeftPixel(0, 10, 0);
   }
-  
+
   setTime();
 }
 
@@ -49,19 +49,18 @@ int frequency(char note) {
 }
 
 
-void setAlarmBySunrise() {
-  ALARM_HOUR = SUNRISE[0] - '0'; //try .toInt() //only think about first pos because sunrise-hour always <10
-  ALARM_MINUTE =  (10 * (SUNRISE[2] - '0')) + (SUNRISE[3] - '0');
+void setAlarmBySunrise() { //TODO Add to all 3 alarms
+  ALARM_HOUR[0] = SUNRISE[0] - '0'; //try .toInt() //only think about first pos because sunrise-hour always <10
+  ALARM_MINUTE[0] =  (10 * (SUNRISE[2] - '0')) + (SUNRISE[3] - '0');
 }
 
-void setAlarmByWeather() {
-  // deprecated needs complete rewrite better use of if statement (switch don't work)
-  
+void setAlarmByWeather() { //TODO Add to all 3 alarms
+  //TODO deprecated needs complete rewrite better use of if statement (switch don't work)
+
   // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear
   if (strstr(WEATHER_STATE.c_str(), "Cloudy") || strstr(WEATHER_STATE.c_str(), "Rain") || strstr(WEATHER_STATE.c_str(), "Breezy") || strstr(WEATHER_STATE.c_str(), "Sunny") || strstr(WEATHER_STATE.c_str(), "Thunderstorms")) {
-    int gesammtminuten = (ALARM_HOUR * 60 + ALARM_MINUTE) - 30;
-    ALARM_MINUTE = gesammtminuten % 60;
-    Serial.println(ALARM_MINUTE);
+    int gesammtminuten = (ALARM_HOUR[0] * 60 + ALARM_MINUTE[0]) - 30; //XXX why?
+    ALARM_MINUTE[0] = gesammtminuten % 60;
   }
 }
 

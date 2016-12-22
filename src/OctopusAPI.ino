@@ -16,6 +16,11 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(2, 13, NEO_RGBW + NEO_KHZ800);
 #include <Adafruit_IS31FL3731.h>
 Adafruit_IS31FL3731_Wing matrix = Adafruit_IS31FL3731_Wing();
 
+//** Segment matrix
+#include <Adafruit_LEDBackpack.h>
+#define DISPLAY_ADDRESS   0x70
+Adafruit_7segment bar = Adafruit_7segment();
+
 //** Grove Sensor (Digital Light)
 #include <Digital_Light_TSL2561.h>
 
@@ -31,13 +36,14 @@ void kitInit() {
   if (Wire.status() != I2C_OK) Serial.println("Something wrong with I2C");
   pixels.begin();                 //Init LEDs
   matrix.begin();                 //Init LED Matrix
+  bar.begin(DISPLAY_ADDRESS);     //Init 7-Segment matrix
   TSL2561.init();                 //Init Digital Light Sensor
 
-#ifdef AP_SSID
-  matrixAnzeige("Hello", 6);      //Starting screen
+  #ifdef AP_SSID
+  matrixAnzeige("Hello", 6);        //Starting screen
   //ESP.eraseConfig();            //When failing activate
-  connectWiFi();                  //Connect to AP
-#endif
+  connectWiFi();                    //Connect to AP
+  #endif
 }
 
 void connectWiFi(){
@@ -93,7 +99,7 @@ void httpGET(String host, String url, String &antwort){
 //**** Charlieplex Matrix //** pwm 0 - 255
 void matrixAnzeige(String text, int pwm) {
   int anzahlPixel = (text.length()) * 6;
-  matrix.setTextColor(pwm);        //Color brightness
+  matrix.setTextColor(pwm < 255 ? 255 : pwm);        //Color brightness
   matrix.setTextWrap(false);
   for (int x = 1; x >= -anzahlPixel; x--) { // Scroll text
     matrix.clear();
@@ -103,9 +109,32 @@ void matrixAnzeige(String text, int pwm) {
   }
 }
 
+//**** 7-Segment Matrix
+void segmentAnzeige(int hours, int minutes, int brightness) {
+  bar.setBrightness(brightness < 15 ? 15 : brightness); // brightness of the display
+  bar.blinkRate(0); //0-3 (0 no blinking)
+  int displayValue = hours*100 + minutes; // Time to numeric
+  bar.print(displayValue, DEC); // Now print the time value to the display.
+  if (hours == 0) {
+    bar.writeDigitNum(1, 0);  // Pad hour 0.
+    if (minutes < 10)
+      bar.writeDigitNum(2, 0); // Prob. needs 0 for < 10
+  }
+  bar.writeDisplay(); // Push to Display
+}
+
+void segmentAnzeige(int num) {
+  bar.print(num, DEC);
+  bar.writeDisplay(); // Push to Display
+}
+
+void blinkColon(bool colon){ //(seconds % 2 == 0)
+  bar.drawColon(colon); // Blink the colon
+}
+
 //**** Left Neopixel LED (RGB)
 void changeLeftPixel(uint8_t r, uint8_t g, uint8_t b) {
-#define SEC 0x3F // MagicConstant - do not change
+  #define SEC 0x3F // MagicConstant - do not change
   // 0 - 255
   pixels.setPixelColor(1, g & SEC, r & SEC, b & SEC);
   pixels.show();
@@ -113,7 +142,7 @@ void changeLeftPixel(uint8_t r, uint8_t g, uint8_t b) {
 
 //**** Right Neopixel LED (RGB)
 void changeRightPixel(uint8_t r, uint8_t g, uint8_t b) {
-#define SEC 0x3F // MagicConstant - do not change
+  #define SEC 0x3F // MagicConstant - do not change
   //0 - 255
   pixels.setPixelColor(0, g & SEC, r & SEC, b & SEC);
   pixels.show();
@@ -129,6 +158,6 @@ int buttonPressed() {
   return digitalRead(BUTTON) == LOW;
 }
 
-long readLightLevel(){
+float readLightLevel(){
   return TSL2561.readVisibleLux();
 }

@@ -53,7 +53,6 @@ int TIMEZONE = 1;
 long epochTime;
 char date[15];
 
-
 String _display() {
   if (!buttonPressed()) {
     char str[10];
@@ -63,16 +62,18 @@ String _display() {
     sprintf(str2, "%d", HOUR);
 
     strcat(str2, ":");
-    if (MINUTE < 10) {
+    if (MINUTE < 10)
       strcat(str2, "0");
-    }
     strcat(str2, str);
     return str2;        // Return HOUR : MINUTES
-  } else {
-    char str3[50] = {0};
-    memset(str3, 0, sizeof(str3));        // Clear array
-    return strcat(strcat(strcat(strcat(strcat(str3, " "), date), " "), WEATHER_STATE.c_str()), " ") + String(OUT_TEMP) + "C";       // Return DATE WEATHER TEMP
-  }
+  } else
+    return displayInfos();
+}
+
+String displayInfos(){
+  char str3[50] = {0};
+  memset(str3, 0, sizeof(str3));        // Clear array
+  return strcat(strcat(strcat(strcat(strcat(str3, " "), date), " "), WEATHER_STATE.c_str()), " ") + String(OUT_TEMP) + "C";       // Return DATE WEATHER TEMP
 }
 
 void loop() {
@@ -83,6 +84,8 @@ void loop() {
   if (rotaryRead() == 0)
     v = readLightLevel() < 50 ? readLightLevel() + 2 : (double)(readLightLevel() / 100 * 5); //TODO
   matrixAnzeige(_display(), v);                 // Draw information of screen
+  //TODO segmentAnzeige(HOUR, MINUTE, 10);
+  //TODO blinkColon(bool); (sec % 2 == 0)
 
   //** every minute do
   unsigned long currentMillisMinute = millis();
@@ -101,7 +104,7 @@ void loop() {
   }
 
   //** Check for alarm
-  if (HOUR == ALARM_HOUR && MINUTE == ALARM_MINUTE) {
+  if (HOUR == ALARM_HOUR[0] && MINUTE == ALARM_MINUTE[0]) { //TODO add multiple alarms
     alarm();
   }
 

@@ -32,30 +32,33 @@ String getPage(){
   return s;               // Return whole file
 }
 
-// void saveToSettings() {
-//   SPIFFS.begin();         // same as before
-//   File settingsFile = SPIFFS.open("/settings.txt", "w");
-//   if(!settingsFile) return;
-//
-//   settingsFile.println("ssid=" + network[0]); // write to file
-//   settingsFile.println("psk=" + network[1]);
-//   settingsFile.println("ip=" + network[2]);
-//
-//   settingsFile.close();
-//   SPIFFS.end();
-// }
+void saveToSettings() {
+  SPIFFS.begin();         // same as before
+  File settingsFile = SPIFFS.open("/settings.txt", "w");
+  if(!settingsFile) return;
 
-// void readFromSettings() {
-//   SPIFFS.begin();
-//   File settingsFile = SPIFFS.open("/settings.txt", "r");
-//   if(!settingsFile) return;
-//
-//   while (settingsFile.available()) { // reads whole file
-//     String line = settingsFile.readStringUntil('\n'); // Each line
-//     line = line.substr(line.find("=") + 1); // Gets only the part after '='  //TODO Error
-//     Serial.println(line); //TODO
-//   }
-//
-//   settingsFile.close();
-//   SPIFFS.end();
-// }
+  settingsFile.println("ssid=" + network[0]); // write to file
+  settingsFile.println("psk=" + network[1]);
+  settingsFile.println("ip=" + network[2]);
+
+  settingsFile.println("location=" + weather[0]);
+  settingsFile.println("worklocation=" + weather[1]);
+
+  settingsFile.close();
+  SPIFFS.end();
+}
+
+void readFromSettings() {
+  SPIFFS.begin();
+  File settingsFile = SPIFFS.open("/settings.txt", "r");
+  if(!settingsFile) return;
+
+  while (settingsFile.available()) { // reads whole file
+    String line = settingsFile.readStringUntil('\n'); // Each line
+    //line = strtok(line.c_str(), new char[] {"="}); // Split line at '=' //XXX help why no working with "=" ?
+    Serial.println(line); //TODO store somewhere
+  }
+
+  settingsFile.close();
+  SPIFFS.end();
+}

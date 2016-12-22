@@ -22,8 +22,8 @@ String WEATHER_STATE;                           // State of weather [*] Cloudy, 
 String SUNRISE;                                 //Sunrise time
 
 //** ALARM **
-int ALARM_HOUR = 6;
-int ALARM_MINUTE = 59;
+int ALARM_HOUR[3] = {23,23,23};                 // Hour of alarm // *TODO change to array for multiple
+int ALARM_MINUTE[3] = {59,59,59};               // Minute of alarm // *TODO change to array
 const int RING_FOR = 60000;                     // Millisec of ring time
 boolean alarmDays [7] = { false, false, false, false, false, false, false };     // days the alarm goes off SUN, MON ...
 

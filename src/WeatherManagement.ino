@@ -1,6 +1,7 @@
 
 String getWoeid(){
   //String cmd = "/v1/public/yql?q=select%20woeid%20from%20geo.places(1)%20where%20text=%22Saarlouis%2C%20de%22&format=xml\r\n";
+  char cmd[200] = "/v1/public/yql?q=select%20woeid%20from%20geo.places(1)%20where%20text=%22";
   strcat(cmd, CITY.c_str());
   strcat(cmd, "%2C%20de%22&format=xml\r\n");
   Serial.println(cmd);

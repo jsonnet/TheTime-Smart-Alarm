@@ -8,8 +8,6 @@
 #include <WiFiUdp.h>
 ESP8266WebServer server(80);
 
-#define AP_SSID "Joshua's iPhone"               // AP Network
-#define AP_PASS "winnerofhackathon"             // PW Network
 
 //** GENERAL **
 // http://maps.google.com/maps/api/geocode/xml?address= or /json?address=bla+bla
@@ -17,9 +15,11 @@ String HOME_ADDR [2] = {"49.2397389", "6.694573"};    // Home address
 String WORK_ADDR [2] = {"49.319104", "6.751235"};     // Work address
 
 //** WEATHER **
+String WOEID;
 int OUT_TEMP = 0;                               // Weather temperature
 String WEATHER_STATE;                           // State of weather [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear
 String SUNRISE;                                 //Sunrise time
+String CITY = "Saarlouis";
 
 //** ALARM **
 int ALARM_HOUR[3] = {23,23,23};                 // Hour of alarm // *TODO change to array for multiple
@@ -119,11 +119,12 @@ void loop() {
 void setup() {
   kitInit();                  //Init board
   readFromSettings();         //Get settings
-  
+
   delay(1000);                //Wait for delay
 
   if (WiFi.status() == WL_CONNECTED) {
-    //getWoeid();             // Use for getting location id
+    //TODO: retrieve city data from webserver/settingsfile
+    WOEID = getWoeid();             // Use for getting location id
     getWeatherData();         // Store current weather data
     getTempData();            // Store current temperatur
     getSunriseData();         // Store sunrise time

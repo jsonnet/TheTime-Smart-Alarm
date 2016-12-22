@@ -6,15 +6,15 @@ void alarm() {
     tone(15, 500, 500);
     delay(500);
   } while(!(digitalRead(2) == LOW));
-  
+
   noTone(15);
-  
+
   while ((digitalRead(2) == LOW)) {
     changeLeftPixel(40, 0, 0);
     delay(2000);
     changeLeftPixel(0, 10, 0);
   }
-  
+
   setTime();
 }
 
@@ -56,7 +56,7 @@ void setAlarmBySunrise() {
 
 void setAlarmByWeather() {
   // deprecated needs complete rewrite better use of if statement (switch don't work)
-  
+
   // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear
   if (strstr(WEATHER_STATE.c_str(), "Cloudy") || strstr(WEATHER_STATE.c_str(), "Rain") || strstr(WEATHER_STATE.c_str(), "Breezy") || strstr(WEATHER_STATE.c_str(), "Sunny") || strstr(WEATHER_STATE.c_str(), "Thunderstorms")) {
     int gesammtminuten = (ALARM_HOUR * 60 + ALARM_MINUTE) - 30;

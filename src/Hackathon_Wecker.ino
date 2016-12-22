@@ -22,8 +22,8 @@ String WEATHER_STATE;                           // State of weather [*] Cloudy, 
 String SUNRISE;                                 //Sunrise time
 
 //** ALARM **
-int ALARM_HOUR[3] = {23,23,23};                 // Hour of alarm // *TODO change to array for multiple
-int ALARM_MINUTE[3] = {59,59,59};               // Minute of alarm // *TODO change to array
+int ALARM_HOUR = 6;
+int ALARM_MINUTE = 59;
 const int RING_FOR = 60000;                     // Millisec of ring time
 boolean alarmDays [7] = { false, false, false, false, false, false, false };     // days the alarm goes off SUN, MON ...
 
@@ -115,7 +115,6 @@ void loop() {
 
 void setup() {
   kitInit();                  //Init board
-  readFromSettings();         //Get settings
 
   delay(1000);                //Wait for delay
 
@@ -127,8 +126,7 @@ void setup() {
     setTime();                // Set time with udp
   }
 
-  //setAlarmBySunrise(); // These needs to work w/ webinterface
-  //setAlarmByWeather(); // Needs to be removed here
+  //TODO: Set the settings from webinterface (alarm)
 
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println("Webserver starting");

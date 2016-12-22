@@ -14,13 +14,14 @@ void getWeatherData() {
   String antwort;
 
   httpGET(host, cmd, antwort);
-  
+
   String weather = searchXML(antwort, "text");
   WEATHER_STATE = weather;
 
   // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear
-  if (strstr(weather.c_str(), "Cloudy") || strstr(weather.c_str(), "Rain") || strstr(weather.c_str(), "Breezy") || strstr(weather.c_str(), "Sunny") || strstr(weather.c_str(), "Thunderstorms")) {
-    //maybe shorten or show icon
+  if (!(strstr(weather.c_str(), "Cloudy") || strstr(weather.c_str(), "Rain") || strstr(weather.c_str(), "Breezy") || strstr(weather.c_str(), "Sunny") || strstr(weather.c_str(), "Thunderstorms"))) {
+    //IF not able to get weatherdata print this
+    WEATHER_STATE = "%weather%";
   }
 }
 
@@ -46,7 +47,7 @@ void getSunriseData(){
   String antwort;
 
   httpGET(host, cmd, antwort);
-  
-  SUNRISE = searchXML(antwort, "sunrise");
-}
 
+  SUNRISE = searchXML(antwort, "sunrise");
+
+}

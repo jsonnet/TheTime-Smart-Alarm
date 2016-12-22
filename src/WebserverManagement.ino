@@ -16,7 +16,6 @@ void serverHomepage() {
   }
   //TODO add alarm things
 
-  saveToSettings();
   server.send(200, "text/html", getPage()); //change here to file
 }
 
@@ -33,30 +32,30 @@ String getPage(){
   return s;               // Return whole file
 }
 
-void saveToSettings() {
-  SPIFFS.begin();         // same as before
-  File settingsFile = SPIFFS.open("/settings.txt", "w");
-  if(!settingsFile) return;
+// void saveToSettings() {
+//   SPIFFS.begin();         // same as before
+//   File settingsFile = SPIFFS.open("/settings.txt", "w");
+//   if(!settingsFile) return;
+//
+//   settingsFile.println("ssid=" + network[0]); // write to file
+//   settingsFile.println("psk=" + network[1]);
+//   settingsFile.println("ip=" + network[2]);
+//
+//   settingsFile.close();
+//   SPIFFS.end();
+// }
 
-  settingsFile.println("ssid=" + network[0]); // write to file
-  settingsFile.println("psk=" + network[1]);
-  settingsFile.println("ip=" + network[2]);
-
-  settingsFile.close();
-  SPIFFS.end();
-}
-
-void readFromSettings() {
-  SPIFFS.begin();
-  File settingsFile = SPIFFS.open("/settings.txt", "r");
-  if(!settingsFile) return;
-
-  while (settingsFile.available()) { // reads whole file
-    String line = settingsFile.readStringUntil('\n'); // Each line
-    line = line.substr(line.find("=") + 1); // Gets only the part after '='  //TODO Error
-    Serial.println(line); //TODO
-  }
-
-  settingsFile.close();
-  SPIFFS.end();
-}
+// void readFromSettings() {
+//   SPIFFS.begin();
+//   File settingsFile = SPIFFS.open("/settings.txt", "r");
+//   if(!settingsFile) return;
+//
+//   while (settingsFile.available()) { // reads whole file
+//     String line = settingsFile.readStringUntil('\n'); // Each line
+//     line = line.substr(line.find("=") + 1); // Gets only the part after '='  //TODO Error
+//     Serial.println(line); //TODO
+//   }
+//
+//   settingsFile.close();
+//   SPIFFS.end();
+// }

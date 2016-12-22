@@ -50,6 +50,7 @@ void connectWiFi(){
   if (WiFi.status() == WL_CONNECTED) {
     changeRightPixel(0, 0, 5);
     udp.begin(localPort);         //Init time server port
+    Serial.println("\nWifi successfully connected! \n");
     Serial.println ("\nconnected, my IP:" + WiFi.localIP().toString());
   } else {
     changeRightPixel(0, 0, 0);

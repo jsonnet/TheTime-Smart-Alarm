@@ -50,8 +50,8 @@ int frequency(char note) {
 
 
 void setAlarmBySunrise() { //TODO Add to all 3 alarms
-  ALARM_HOUR[0] = SUNRISE - '0'; //try .toInt() //only think about first pos because sunrise-hour always <10
-  ALARM_MINUTE[0] =  (10 * (SUNRISE - '0')) + (SUNRISE - '0');
+  ALARM_HOUR[0] = SUNRISE[0] - '0'; //try .toInt() //only think about first pos because sunrise-hour always <10
+  ALARM_MINUTE[0] =  (10 * (SUNRISE[3] - '0')) + (SUNRISE[2] - '0');
 }
 
 

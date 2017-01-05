@@ -4,7 +4,6 @@ String network[3];
 String weather[2];
 
 void serverHomepage() {
-  server.arg("ip") = "192.168.178.1";
   if (server.hasArg("ip") && server.hasArg("networkname") && server.hasArg("password")) {
     network[2] = server.arg("ip");
     network[0] = server.arg("networkname");

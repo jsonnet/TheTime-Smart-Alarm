@@ -38,7 +38,7 @@ void kitInit() {
   matrix.begin();                 //Init LED Matrix
   bar.begin(DISPLAY_ADDRESS);     //Init 7-Segment matrix
   TSL2561.init();                 //Init Digital Light Sensor
-
+  //TODO add debug mode, when holding button on startup
   #ifdef AP_SSID
   matrixAnzeige("Hello", 6);        //Starting screen
   //ESP.eraseConfig();            //When failing activate
@@ -56,8 +56,8 @@ void connectWiFi(){
   if (WiFi.status() == WL_CONNECTED) {
     changeRightPixel(0, 0, 5);
     udp.begin(localPort);         //Init time server port
-    Serial.println("\nWifi successfully connected! \n");
-    Serial.println ("\nconnected, my IP:" + WiFi.localIP().toString());
+    Serial.println("\nWifi successfully connected!");
+    Serial.println ("connected, my IP:" + WiFi.localIP().toString());
   } else {
     changeRightPixel(0, 0, 0);
     WiFi.forceSleepBegin();       //Deactivate ESP chip
@@ -69,7 +69,7 @@ void closeWiFi(){
   // Some if Statement, so webserver can be accessed
   // So only disconnect after some time or in the night or energy saving mode
   WiFi.disconnect();
-  changeLeftPixel(0, 0, 0);
+  changeRightPixel(0, 0, 0);
   WiFi.forceSleepBegin();
 }
 
@@ -100,27 +100,26 @@ void httpGET(String host, String url, String &antwort){
 //**** Charlieplex Matrix //** pwm 0 - 255
 void matrixAnzeige(String text, int pwm) {
   int anzahlPixel = (text.length()) * 6;
- // matrix.setTextColor(pwm < 255 ? 255 : pwm);        //Color brightness
-  matrix.setTextColor(pwm);
+  matrix.setTextColor(pwm < 255 ? pwm : 255);        //Color brightness
   matrix.setTextWrap(false);
   for (int x = 1; x >= -anzahlPixel; x--) { // Scroll text
     matrix.clear();
     matrix.setCursor(x, 0);
     matrix.print(text);
-    delay(75);
+    delay(63);
   }
 }
 
 //**** 7-Segment Matrix
 void segmentAnzeige(int hours, int minutes, int brightness) {
-  bar.setBrightness(brightness < 15 ? 15 : brightness); // brightness of the display
+  bar.setBrightness(brightness < 15 ? brightness : 15); // brightness of the display
   bar.blinkRate(0); //0-3 (0 no blinking)
   int displayValue = hours*100 + minutes; // Time to numeric
   bar.print(displayValue, DEC); // Now print the time value to the display.
   if (hours == 0) {
     bar.writeDigitNum(1, 0);  // Pad hour 0.
     if (minutes < 10)
-      bar.writeDigitNum(2, 0); // Prob. needs 0 for < 10
+      bar.writeDigitNum(3, 0); // Prob. needs 0 for < 10 //watch out colon 2 are the dots
   }
   bar.writeDisplay(); // Push to Display
 }
@@ -132,6 +131,7 @@ void segmentAnzeige(int num) {
 
 void blinkColon(bool colon){ //(seconds % 2 == 0)
   bar.drawColon(colon); // Blink the colon
+  bar.writeDisplay(); // Push to Display
 }
 
 //**** Left Neopixel LED (RGB)

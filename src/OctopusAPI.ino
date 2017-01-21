@@ -27,7 +27,6 @@ Adafruit_7segment bar = Adafruit_7segment();
 //** WiFi
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-#include <WiFiUdp.h>
 
 //**** PreInit
 void kitInit() {
@@ -38,21 +37,22 @@ void kitInit() {
   matrix.begin();                 //Init LED Matrix
   bar.begin(DISPLAY_ADDRESS);     //Init 7-Segment matrix
   TSL2561.init();                 //Init Digital Light Sensor
-  //TODO add debug mode, when holding button on startup
   #ifdef AP_SSID
-  matrixAnzeige("Hello", 6);        //Starting screen
-  //ESP.eraseConfig();            //When failing activate
+  matrixAnzeigeScroll("Hello", 6);        //Starting screen
+  //ESP.eraseConfig();                //When failing activate
   connectWiFi();                    //Connect to AP
   #endif
 }
 
 void connectWiFi(){
-  WiFi.persistent(false);         //Don't save wifi
+  WiFi.persistent(true);         //Don't save wifi
   WiFi.mode(WIFI_STA);            //Mode: Stationary AP
   WiFi.begin(AP_SSID, AP_PASS);   //Start wifi connection
   changeRightPixel(20, 0, 0);     //Status LED
-  for(int i = 0; i <= 10 && WiFi.status() != WL_CONNECTED; i++)
-    delay(1500);
+  for(int i = 0; i <= 10 && WiFi.status() != WL_CONNECTED; i++) {
+    delay(1000);
+    Serial.print("... ");
+  }
   if (WiFi.status() == WL_CONNECTED) {
     changeRightPixel(0, 0, 5);
     udp.begin(localPort);         //Init time server port
@@ -61,13 +61,11 @@ void connectWiFi(){
   } else {
     changeRightPixel(0, 0, 0);
     WiFi.forceSleepBegin();       //Deactivate ESP chip
-    Serial.println ("\nWiFi switched off");
+    Serial.println("\nWiFi switched off");
   }
 }
 
 void closeWiFi(){
-  // Some if Statement, so webserver can be accessed
-  // So only disconnect after some time or in the night or energy saving mode
   WiFi.disconnect();
   changeRightPixel(0, 0, 0);
   WiFi.forceSleepBegin();
@@ -98,15 +96,24 @@ void httpGET(String host, String url, String &antwort){
 }
 
 //**** Charlieplex Matrix //** pwm 0 - 255
-void matrixAnzeige(String text, int pwm) {
+void matrixAnzeige(String text, int x, int pwm) {
   int anzahlPixel = (text.length()) * 6;
   matrix.setTextColor(pwm < 255 ? pwm : 255);        //Color brightness
   matrix.setTextWrap(false);
-  for (int x = 1; x >= -anzahlPixel; x--) { // Scroll text
+  matrix.clear();
+  matrix.setCursor(-(x%anzahlPixel), 0);
+  matrix.print(text);
+}
+
+void matrixAnzeigeScroll(String text, int pwm) {
+  int anzahlPixel = (text.length()) * 6;
+  matrix.setTextColor(pwm < 255 ? pwm : 255);        //Color brightness
+  matrix.setTextWrap(false);
+  for (int x = 0; x >= -anzahlPixel; x--) { // Scroll text
     matrix.clear();
     matrix.setCursor(x, 0);
     matrix.print(text);
-    delay(63);
+    delay(50);
   }
 }
 
@@ -129,8 +136,10 @@ void segmentAnzeige(int num) {
   bar.writeDisplay(); // Push to Display
 }
 
-void blinkColon(bool colon){ //(seconds % 2 == 0)
-  bar.drawColon(colon); // Blink the colon
+bool isColon = false;
+void blinkColon(){ //(seconds % 2 == 0)
+  isColon = !isColon;
+  bar.drawColon(isColon); // Blink the colon
   bar.writeDisplay(); // Push to Display
 }
 

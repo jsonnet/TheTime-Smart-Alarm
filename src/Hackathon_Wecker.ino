@@ -25,8 +25,8 @@ String SUNRISE;                                 //Sunrise time
 String CITY = "Saarlouis";
 
 //** ALARM **
-int ALARM_HOUR[3] = {23,23,23};                 // Hour of alarm // *TODO change to array for multiple
-int ALARM_MINUTE[3] = {59,59,59};               // Minute of alarm // *TODO change to array
+int ALARM_HOUR[3] = {23,23,23};                 // Hour of alarm
+int ALARM_MINUTE[3] = {59,59,59};               // Minute of alarm
 const int RING_FOR = 60000;                     // Millisec of ring time
 bool alarmDays [7] = { false, false, false, false, false, false, false };     // days the alarm goes off SUN, MON ...
 
@@ -44,15 +44,18 @@ byte packetBuffer[ NTP_PACKET_SIZE];
 WiFiUDP udp;
 
 //** TIMING **
+long previousMillisBlink = 0;
+const long intervalBlink = 1000;                 // 1 sec
 long previousMillisMinute = 0;
 const long intervalMinute = 60000;               // 1 minute
 long previousMillisTime = 0;
 const long intervalTime = 3600000;               // 1 hour
+
+//** Other **
 long buttonTimer = 0;
 long longPressTime = 250;
 bool buttonActive = false;
 bool longPressActive = false;
-bool colonOn;
 
 //** ACTUAL TIME **
 int HOUR;
@@ -61,27 +64,6 @@ int TIMEZONE = 1;
 long epochTime;
 char date[15];
 
-String _display() {
-  if(Segment == false) {
-    if (!buttonPressed()) {
-      char str[10];
-      sprintf(str, "%d", MINUTE);
-
-      char str2[10];
-      sprintf(str2, "%d", HOUR);
-
-      strcat(str2, ":");
-      if (MINUTE < 10)
-        strcat(str2, "0");
-      strcat(str2, str);
-      return str2;      // Return HOUR : MINUTES
-    } else
-      return displayInfos();
-  }else{
-    return displayInfos();
-  }
-}
-
 String displayInfos(){
   char str3[50] = {0};
   memset(str3, 0, sizeof(str3));        // Clear array
@@ -89,19 +71,29 @@ String displayInfos(){
 }
 
 void displaySegment(int v){
-  segmentAnzeige(HOUR, MINUTE, v/17);
+  segmentAnzeige(HOUR, MINUTE, (v/17)+1);
 }
 
+int count = -1;
 void loop() {
   server.handleClient();                        //webserver handle clients
+  count++;
+  float light = readLightLevel();
+  int rotary = rotaryRead();
 
   //** Brightness of the display and display of things
-  int v = round(pow(1.05, rotaryRead()));       //expon. wachstum ? oder besser betrag von expon. verkleinerung
-  if (rotaryRead() == 0)
-    v = readLightLevel() < 50 ? readLightLevel() + 2 : (double)(readLightLevel() / 100 * 5);
-  matrixAnzeige(_display(), v);                 // Draw information of screen
-  colonOn = !colonOn;                           // reverse boolean
-  blinkColon(colonOn);                          // toggle colon on time segment
+  int v = round(pow(1.05, rotary));       //expon. wachstum ? oder besser betrag von expon. verkleinerung
+  if (rotary == 0)
+    v = light < 50 ? light + 2 : (double)(light / 50 * 5);
+  if(rotary <= -4)
+    v = 0;
+  matrixAnzeige(displayInfos(), count, v);                 // Draw information of screen
+
+  unsigned long currentMillisBlink = millis();
+  if (currentMillisBlink - previousMillisBlink >= intervalBlink) {
+    blinkColon();                          // toggle colon on time segment
+    previousMillisBlink = currentMillisBlink;
+  }
 
   //** every minute do
   unsigned long currentMillisMinute = millis();
@@ -115,7 +107,7 @@ void loop() {
         HOUR++;
       else
         HOUR = 0;
-      displaySegment(v);
+    displaySegment(v*4);
     }
     previousMillisMinute = currentMillisMinute; // Reset timer
   }
@@ -125,7 +117,7 @@ void loop() {
     alarm();
   }
 
-  //** Mode change
+  //** Config mode [WIP]
   if (buttonPressed()) {
     if (buttonActive == false) {
       buttonActive = true;
@@ -133,18 +125,15 @@ void loop() {
     }
     if ((millis() - buttonTimer > longPressTime) && (longPressActive == false)) {
       longPressActive = true;
-      Serial.println("looong press");
     }
   } else {
     if (buttonActive == true) {
       if (longPressActive == true)
         longPressActive = false;
-      else {
+      else
         Serial.println("short press");
-      }
       buttonActive = false;
     }
-
   }
 
   //** Reupdate time from udp server every hour
@@ -153,13 +142,14 @@ void loop() {
     setTime();
     previousMillisTime = currentMillisTime;     // Reset timer
   }
+  delay(20);
 }
 
 void setup() {
   kitInit();                  //Init board
+  //readFromSettings();         //Get settings
 
   if (WiFi.status() == WL_CONNECTED) {
-    readFromSettings();         //Get settings
     //TODO set settings (alarm eg)
     //TODO: retrieve city data from webserver/settingsfile
     WOEID = getWoeid();       // Use for getting location id
@@ -173,5 +163,4 @@ void setup() {
     server.begin();                     //Init webserver
   }
   changeRightPixel(0, 0, 0);
-  displaySegment(10);
 }

@@ -1,0 +1,67 @@
+{
+  "Connection":
+      {
+        "wlanID": "clock",
+        "password": "winnerofhackathon"
+      },
+
+  "Weathersettings":
+      {
+        "homeadress":,
+        "workadress":
+      },
+
+  "Timesettings": [
+    {
+      "days": {
+                  "monday": 0,
+                  "tuesday": 0,
+                  "wednesday": 0,
+                  "thursday": 0,
+                  "friday": 0,
+                  "saturday": 0,
+                  "sunday": 0
+                  },
+      "alarmhour": 0,
+      "alarmminute": 0,
+      "wake_at_sunset": 0,
+      "snooze": 0,
+      "consider_traffic": 0,
+      "consider weather": 0
+    },
+    {
+      "days": {
+                  "monday": 0,
+                  "tuesday": 0,
+                  "wednesday": 0,
+                  "thursday": 0,
+                  "friday": 0,
+                  "saturday": 0,
+                  "sunday": 0
+                  },
+      "alarmhour": 0,
+      "alarmminute": 0,
+      "wake_at_sunset": 0,
+      "snooze": 0,
+      "consider_traffic": 0,
+      "consider weather": 0
+    },
+    {
+      "days": {
+                  "monday": 0,
+                  "tuesday": 0,
+                  "wednesday": 0,
+                  "thursday": 0,
+                  "friday": 0,
+                  "saturday": 0,
+                  "sunday": 0
+                  },
+      "alarmhour": 0,
+      "alarmminute": 0,
+      "wake_at_sunset": 0,
+      "snooze": 0,
+      "consider_traffic": 0,
+      "consider weather": 0
+    }
+  ]
+}

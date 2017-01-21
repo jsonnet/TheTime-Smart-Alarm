@@ -41,7 +41,7 @@ void getWeatherData() {
   WEATHER_STATE = weather;
 
   //TODO try icons
-  // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear
+  // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear, [*] Snow
   if (strstr(weather.c_str(), "Cloudy") )
     WEATHER_STATE = "Cloudy";
   else if (strstr(weather.c_str(), "Rain"))
@@ -56,7 +56,7 @@ void getWeatherData() {
     WEATHER_STATE = "Clear";
   else {
     Serial.println(WEATHER_STATE);
-    WEATHER_STATE = "%weather%"; // If getting data fails
+    WEATHER_STATE = weather; // If getting data fails
   }
 }
 

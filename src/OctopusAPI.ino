@@ -38,9 +38,13 @@ void kitInit() {
   bar.begin(DISPLAY_ADDRESS);     //Init 7-Segment matrix
   TSL2561.init();                 //Init Digital Light Sensor
   #ifdef AP_SSID
-  matrixAnzeigeScroll("Hello", 6);        //Starting screen
-  //ESP.eraseConfig();                //When failing activate
-  connectWiFi();                    //Connect to AP
+  matrixAnzeigeScroll("Hello", 6);     //Starting screen
+  //ESP.eraseConfig();                 //When failing activate
+  connectWiFi();                       //Connect to AP
+  #else
+  WiFi.softAP("TheTime Smart Alarm"); //Access Point for first setup
+  changeRightPixel(255, 153, 0);
+  matrixAnzeigeScroll(WiFi.softAPIP(), 128);    //Show IP
   #endif
 }
 
@@ -57,7 +61,7 @@ void connectWiFi(){
     changeRightPixel(0, 0, 5);
     udp.begin(localPort);         //Init time server port
     Serial.println("\nWifi successfully connected!");
-    Serial.println ("connected, my IP:" + WiFi.localIP().toString());
+    Serial.println("connected, my IP:" + WiFi.localIP().toString());
   } else {
     changeRightPixel(0, 0, 0);
     WiFi.forceSleepBegin();       //Deactivate ESP chip

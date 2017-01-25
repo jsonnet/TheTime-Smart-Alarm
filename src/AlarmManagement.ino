@@ -1,20 +1,15 @@
 void alarm() {
-  Serial.println("Alarm");
   do {
     tone(15, 300, 500);
+    changeLeftPixel(40, 0, 0);
     delay(500);
     tone(15, 500, 500);
+    changeLeftPixel(0, 40, 0);
     delay(500);
   } while(!(digitalRead(2) == LOW));
 
   noTone(15);
-
-  while ((digitalRead(2) == LOW)) {
-    changeLeftPixel(40, 0, 0);
-    delay(2000);
-    changeLeftPixel(0, 10, 0);
-  }
-
+  changeLeftPixel(0, 0, 0);
   setTime();
 }
 
@@ -49,17 +44,19 @@ int frequency(char note) {
 }
 
 void setAlarmBySunrise() {
-  ALARM_HOUR[0] = SUNRISE[0] - '0'; //try .toInt() //only think about first pos because sunrise-hour always <10
+  if(strcmp(SUNRISE.c_str(), "")) // If SUNRISE data is empty eg. could not get at startup
+    return;
+  ALARM_HOUR[0] = SUNRISE[0] - '0'; //try .toInt() //only think about first pos because sunrise-hour always prior 10
   ALARM_MINUTE[0] =  (10 * (SUNRISE[3] - '0')) + (SUNRISE[2] - '0');
 }
 
 void setAlarmByWeather() {
   // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear
   if (strstr(WEATHER_STATE.c_str(), "Rain") || strstr(WEATHER_STATE.c_str(), "Breezy") || strstr(WEATHER_STATE.c_str(), "Thunderstorms")) {
-    ALARM_MINUTE[0] += 30;
-    if(ALARM_MINUTE[0] >= 60) {
-      ALARM_MINUTE[0] -= 60;
-      ALARM_HOUR[0] += 1;
+    ALARM_MINUTE[0] -= 30;
+    if(ALARM_MINUTE[0] < 0) {
+      ALARM_MINUTE[0] += 30;
+      ALARM_HOUR[0] -= 1;
     }
   }
 }

@@ -12,27 +12,24 @@ ESP8266WebServer server(80);
 //#define AP_PASS "winnerofhackathon"             // PW Network
 
 //** GENERAL **
-// http://maps.google.com/maps/api/geocode/xml?address= or /json?address=bla+bla
-String HOME_ADDR [2] = {"49.2397389", "6.694573"};    // Home address
-String WORK_ADDR [2] = {"49.319104", "6.751235"};     // Work address
-bool Segment = true;
+String HOME_ADDR = "Überherrn";    // Home address
+String WORK_ADDR = "Saarlouis";     // Work address
 
 //** WEATHER **
 String WOEID;
 int OUT_TEMP = 0;                               // Weather temperature
 String WEATHER_STATE;                           // State of weather [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear
-String SUNRISE;                                 //Sunrise time
+String SUNRISE;                                 // Sunrise time
 String CITY = "Saarlouis";
 
 //** ALARM **
 int ALARM_HOUR[3] = {23,23,23};                 // Hour of alarm
 int ALARM_MINUTE[3] = {59,59,59};               // Minute of alarm
-const int RING_FOR = 60000;                     // Millisec of ring time
-bool alarmDays [7] = { false, false, false, false, false, false, false };     // days the alarm goes off SUN, MON ...
+bool alarmDays[7] = { false, false, false, false, false, false, false };     // days the alarm goes off SUN, MON ...
 
 //** TRAFFIC **
-const String MAPS_HOST = "maps.googleapis.com/maps/api/distancematrix/xml?origins=" + HOME_ADDR[0] + "," + HOME_ADDR[1] + "&destinations=" + WORK_ADDR[0] + "," + WORK_ADDR[1] + "&key=[key]";
-// response ["rows"][0]["elements"][0]["duration_in_traffic"]["value"]
+const String MAPS_HOST = "maps.googleapis.com/maps/api/distancematrix/xml?origins=" + HOME_ADDR + "&destinations=" + WORK_ADDR + "&key=AIzaSyCa-lnY9bJN5gGNKnhWaHCE9SnI82X0QgQ";
+// response ["rows"][0]["elements"][0]["duration_in_traffic"]["value"] -> in sec -> round(value/60)
 int ADD_TRAVEL_TIME = 0;                        // Additional time for travel and traffic
 
 //** TIME NTP **
@@ -40,7 +37,7 @@ const unsigned int localPort = 80;
 IPAddress timeServerIP;
 const char* ntpServerName = "pool.ntp.org";
 const int NTP_PACKET_SIZE = 48;
-byte packetBuffer[ NTP_PACKET_SIZE];
+byte packetBuffer[NTP_PACKET_SIZE];
 WiFiUDP udp;
 
 //** TIMING **
@@ -51,11 +48,11 @@ const long intervalMinute = 60000;               // 1 minute
 long previousMillisTime = 0;
 const long intervalTime = 3600000;               // 1 hour
 
-//** Other **
+/*//** Other ** [WIP]
 long buttonTimer = 0;
 long longPressTime = 250;
 bool buttonActive = false;
-bool longPressActive = false;
+bool longPressActive = false;*/
 
 //** ACTUAL TIME **
 int HOUR;
@@ -71,23 +68,17 @@ String displayInfos(){
 }
 
 void displaySegment(int v){
-  segmentAnzeige(HOUR, MINUTE, (v/17)+1);
+  segmentAnzeige(HOUR, MINUTE, v/17);
 }
 
-int count = -1;
+unsigned int count = 0;
 void loop() {
-  server.handleClient();                        //webserver handle clients
-  count++;
+  server.handleClient(); //webserver handle clients
   float light = readLightLevel();
-  int rotary = rotaryRead();
 
   //** Brightness of the display and display of things
-  int v = round(pow(1.05, rotary));       //expon. wachstum ? oder besser betrag von expon. verkleinerung
-  if (rotary == 0)
-    v = light < 50 ? light + 2 : (double)(light / 50 * 5);
-  if(rotary <= -4)
-    v = 0;
-  matrixAnzeige(displayInfos(), count, v);                 // Draw information of screen
+  int v = (round(pow(light, 0.8)) + 2); // Calc the brightness lightLevel^0.8
+  matrixAnzeige(displayInfos(), count, v); // Draw information of screen
 
   unsigned long currentMillisBlink = millis();
   if (currentMillisBlink - previousMillisBlink >= intervalBlink) {
@@ -107,16 +98,18 @@ void loop() {
         HOUR++;
       else
         HOUR = 0;
-    displaySegment(v*4);
     }
+    displaySegment(v*4);
+
+    //** Check for alarm
+    if ((HOUR == ALARM_HOUR[0] && MINUTE == ALARM_MINUTE[0]) || (HOUR == ALARM_HOUR[1] && MINUTE == ALARM_MINUTE[1]) || (HOUR == ALARM_HOUR[2] && MINUTE == ALARM_MINUTE[2])) {
+      alarm();
+    }
+
     previousMillisMinute = currentMillisMinute; // Reset timer
   }
 
-  //** Check for alarm
-  if ((HOUR == ALARM_HOUR[0] && MINUTE == ALARM_MINUTE[0]) || (HOUR == ALARM_HOUR[1] && MINUTE == ALARM_MINUTE[1]) || (HOUR == ALARM_HOUR[2] && MINUTE == ALARM_MINUTE[2])) {
-    alarm();
-  }
-
+/*
   //** Config mode [WIP]
   if (buttonPressed()) {
     if (buttonActive == false) {
@@ -134,20 +127,29 @@ void loop() {
         Serial.println("short press");
       buttonActive = false;
     }
-  }
+  }*/
 
-  //** Reupdate time from udp server every hour
+  //** Reupdate data every hour
   unsigned long currentMillisTime = millis();
   if (currentMillisTime - previousMillisTime >= intervalTime) {
-    setTime();
+    if (WiFi.status() != WL_CONNECTED) {
+      connectWiFi();            // Connect Wifi if turned off before
+    }
+    if (WiFi.status() == WL_CONNECTED) {
+      getWeatherData();         // Store current weather data
+      getTempData();            // Store current temperatur
+      getSunriseData();         // Store sunrise time
+      setTime();                // Set time with udp
+    }
     previousMillisTime = currentMillisTime;     // Reset timer
   }
+  count++; // Var for display scroll
   delay(20);
 }
 
 void setup() {
-  kitInit();                  //Init board
   //readFromSettings();         //Get settings
+  kitInit();                  //Init board
 
   if (WiFi.status() == WL_CONNECTED) {
     //TODO set settings (alarm eg)
@@ -157,10 +159,12 @@ void setup() {
     getTempData();            // Store current temperatur
     getSunriseData();         // Store sunrise time
     setTime();                // Set time with udp
-
-    Serial.println("Webserver starting");
-    server.on("/", serverHomepage);     //Set webserver
-    server.begin();                     //Init webserver
   }
+
+  Serial.println("Webserver starting");
+  server.on("/", serverHomepage);     //Set webserver
+  server.begin();                     //Init webserver
+
   changeRightPixel(0, 0, 0);
+  displaySegment(10);
 }

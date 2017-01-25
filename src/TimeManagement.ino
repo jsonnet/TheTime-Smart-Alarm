@@ -46,6 +46,7 @@ void setTime() {
     strcat(strcat(date, helper), ".");
 
     epoch += TIMEZONE * 3600; // Add timezone offset
+    Serial.println(dayStr(weekday(epoch))); //TODO
     HOUR = (epoch  % 86400L) / 3600; // Hours
     MINUTE = (epoch  % 3600) / 60; // Minutes
     //SECONDS = (epoch % 60); // Seconds

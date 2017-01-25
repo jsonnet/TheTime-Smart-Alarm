@@ -66,18 +66,15 @@ void serverHomepage() {
 String getPage(){
   String s = " ";         // A String
   bool wat = SPIFFS.begin();         // Init ESP filesystem
-  Serial.println(wat);
   //SPIFFS.format();      // ONLY needs to happen once
-  Serial.println();
   File f = SPIFFS.open("/index.html", "r");
   Serial.println(f);
   if(f) {
-    Serial.println("can i get my file please?");
     s = f.readString();   // Read file
     f.close();            // Close file, needs to happen!
   }
   SPIFFS.end();           // Important close filesystem
-  Serial.println(s);
+  //Serial.println(s);
   return s;               // Return whole file
 }
 

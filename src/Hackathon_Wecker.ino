@@ -25,11 +25,13 @@ String CITY = "Saarlouis";
 //** ALARM **
 int ALARM_HOUR[3] = {23,23,23};                 // Hour of alarm
 int ALARM_MINUTE[3] = {59,59,59};               // Minute of alarm
+bool WEATHER_ALARM = false;
+bool SUNRISE_ALARM = false;
+bool TRAFFIC_ALARM = false;
+bool set = false; // helps to set alarm to weather, sunrise or traffic only once
 bool alarmDays[7] = { false, false, false, false, false, false, false };     // days the alarm goes off SUN, MON ...
 
 //** TRAFFIC **
-const String MAPS_HOST = "maps.googleapis.com/maps/api/distancematrix/xml?origins=" + HOME_ADDR + "&destinations=" + WORK_ADDR + "&key=AIzaSyCa-lnY9bJN5gGNKnhWaHCE9SnI82X0QgQ";
-// response ["rows"][0]["elements"][0]["duration_in_traffic"]["value"] -> in sec -> round(value/60)
 int ADD_TRAVEL_TIME = 0;                        // Additional time for travel and traffic
 
 //** TIME NTP **
@@ -49,10 +51,10 @@ long previousMillisTime = 0;
 const long intervalTime = 3600000;               // 1 hour
 
 /*//** Other ** [WIP]
-long buttonTimer = 0;
-long longPressTime = 250;
-bool buttonActive = false;
-bool longPressActive = false;*/
+   long buttonTimer = 0;
+   long longPressTime = 250;
+   bool buttonActive = false;
+   bool longPressActive = false;*/
 
 //** ACTUAL TIME **
 int HOUR;
@@ -77,8 +79,9 @@ void loop() {
   float light = readLightLevel();
 
   //** Brightness of the display and display of things
-  int v = (round(pow(light, 0.8)) + 2); // Calc the brightness lightLevel^0.8
-  matrixAnzeige(displayInfos(), count, v); // Draw information of screen
+  int v = (round(pow((light/2), 0.85)) + 2); // Calc the brightness lightLevel^0.8
+  if((HOUR >= ALARM_HOUR[0] || HOUR >= ALARM_HOUR[1] || HOUR >= ALARM_HOUR[2]) && (HOUR <= 23)) // Shut off display at night (eg. night mode)
+    matrixAnzeige(displayInfos(), count, v); // Draw information of screen
 
   unsigned long currentMillisBlink = millis();
   if (currentMillisBlink - previousMillisBlink >= intervalBlink) {
@@ -104,14 +107,31 @@ void loop() {
     //** Check for alarm
     if ((HOUR == ALARM_HOUR[0] && MINUTE == ALARM_MINUTE[0]) || (HOUR == ALARM_HOUR[1] && MINUTE == ALARM_MINUTE[1]) || (HOUR == ALARM_HOUR[2] && MINUTE == ALARM_MINUTE[2])) {
       alarm();
+      set = false;
+    }
+
+    //** Check for alarm changes
+    if((set == false) && MINUTE == ALARM_MINUTE[0] && HOUR == (ALARM_HOUR[0] - 1)) {
+      connectWiFi();
+      if(WEATHER_ALARM)
+        if(WiFi.status() == WL_CONNECTED) {
+          getWeatherData();
+          getTempData();
+          setAlarmByWeather();
+        }
+      if(SUNRISE_ALARM)
+        setAlarmBySunrise();
+      if(TRAFFIC_ALARM)
+        setAlarmByTraffic();
+      set = true;
     }
 
     previousMillisMinute = currentMillisMinute; // Reset timer
   }
 
 /*
-  //** Config mode [WIP]
-  if (buttonPressed()) {
+   //** Config mode [WIP]
+   if (buttonPressed()) {
     if (buttonActive == false) {
       buttonActive = true;
       buttonTimer = millis();
@@ -119,7 +139,7 @@ void loop() {
     if ((millis() - buttonTimer > longPressTime) && (longPressActive == false)) {
       longPressActive = true;
     }
-  } else {
+   } else {
     if (buttonActive == true) {
       if (longPressActive == true)
         longPressActive = false;
@@ -127,12 +147,12 @@ void loop() {
         Serial.println("short press");
       buttonActive = false;
     }
-  }*/
+   }*/
 
-  //** Reupdate data every hour
+  //** every hour do
   unsigned long currentMillisTime = millis();
   if (currentMillisTime - previousMillisTime >= intervalTime) {
-    if (WiFi.status() != WL_CONNECTED) {
+    if (WiFi.status() != WL_CONNECTED && ((HOUR >= ALARM_HOUR[0] || HOUR >= ALARM_HOUR[1] || HOUR >= ALARM_HOUR[2]) && (HOUR <= 23))) {
       connectWiFi();            // Connect Wifi if turned off before
     }
     if (WiFi.status() == WL_CONNECTED) {
@@ -141,8 +161,14 @@ void loop() {
       getSunriseData();         // Store sunrise time
       setTime();                // Set time with udp
     }
+
+    //** Shut off WiFi at night
+    if(HOUR == 23)
+      closeWiFi();
+
     previousMillisTime = currentMillisTime;     // Reset timer
   }
+
   count++; // Var for display scroll
   delay(20);
 }

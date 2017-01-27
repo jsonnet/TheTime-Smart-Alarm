@@ -71,13 +71,12 @@ void connectWiFi(){
 
 void closeWiFi(){
   WiFi.disconnect();
-  changeRightPixel(0, 0, 0);
   WiFi.forceSleepBegin();
 }
 
-void httpGET(String host, String url, String &antwort){
+void httpGET(String host, String url, String &antwort, bool secure){
   WiFiClient client;
-  const int httpPort = 80;
+  const int httpPort = (secure == false) ? 80 : 443;
   if (!client.connect(host.c_str(), httpPort)) {
     Serial.println("connection failed");
     return;

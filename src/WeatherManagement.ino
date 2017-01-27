@@ -5,7 +5,7 @@ String getWoeid(){
   String host = "query.yahooapis.com";
   String antwort;
 
-  httpGET(host, cmd, antwort);
+  httpGET(host, cmd, antwort, false);
   int anfang = antwort.indexOf("woeid") + 6;
   int ende = anfang +6;
 
@@ -22,7 +22,7 @@ void getWeatherData() {
 
   Serial.print("\nRetrieving weather-data: ");
 
-  httpGET(host, cmd, antwort); //first pull of answer from the server
+  httpGET(host, cmd, antwort, false); //first pull of answer from the server
 
   int attempts = 0;
   /*if answer is not longer than 305 charackters (310 to be sure)
@@ -30,7 +30,7 @@ void getWeatherData() {
      --> new attempt to pull correct answer*/
   while(antwort.length() <=310) {
     if(attempts >= 10) return;
-    httpGET(host, cmd, antwort);
+    httpGET(host, cmd, antwort, false);
     Serial.print("... "); //Indicates the number of attemps
     attempts++;
   }
@@ -70,7 +70,7 @@ void getTempData(){
 
   Serial.print("\nRetrieving temperature-data: ");
 
-  httpGET(host, cmd, antwort); //first pull of answer from the server
+  httpGET(host, cmd, antwort, false); //first pull of answer from the server
 
   int attempts = 0;
   /*if answer is not longer than 305 charackters (310 to be sure)
@@ -78,7 +78,7 @@ void getTempData(){
      --> new attempt to pull correct answer*/
   while(antwort.length() <=310) {
     if(attempts >= 10) return;
-    httpGET(host, cmd, antwort);
+    httpGET(host, cmd, antwort, false);
     Serial.print("... "); //Indicates the number of attemps
     attempts++;
   }
@@ -102,7 +102,7 @@ void getSunriseData(){
 
   Serial.print("\nRetrieving sunset-data: ");
 
-  httpGET(host, cmd, antwort); //first pull of answer from the server
+  httpGET(host, cmd, antwort, false); //first pull of answer from the server
 
   int attempts = 0;
   /*if answer is not longer than 305 charackters (310 to be sure)
@@ -110,7 +110,7 @@ void getSunriseData(){
      --> new attempt to pull correct answer*/
   while(antwort.length() <=310) {
     if(attempts >= 10) return;
-    httpGET(host, cmd, antwort);
+    httpGET(host, cmd, antwort, false);
     Serial.print("... "); //Indicates the number of attemps
     attempts++;
   }

@@ -70,7 +70,7 @@ String displayInfos(){
 }
 
 void displaySegment(int v){
-  segmentAnzeige(HOUR, MINUTE, v/17);
+  segmentAnzeige(HOUR, MINUTE, ceil(v/17));
 }
 
 unsigned int count = 0;
@@ -80,7 +80,7 @@ void loop() {
 
   //** Brightness of the display and display of things
   int v = (round(pow((light/2), 0.85)) + 2); // Calc the brightness lightLevel^0.8
-  if((HOUR >= ALARM_HOUR[0] || HOUR >= ALARM_HOUR[1] || HOUR >= ALARM_HOUR[2]) && (HOUR <= 23)) // Shut off display at night (eg. night mode)
+  if((HOUR >= ALARM_HOUR[0] || HOUR >= ALARM_HOUR[1] || HOUR >= ALARM_HOUR[2] || HOUR >= 5) && (HOUR <= 23)) // Shut off display at night (eg. night mode)
     matrixAnzeige(displayInfos(), count, v); // Draw information of screen
 
   unsigned long currentMillisBlink = millis();
@@ -152,7 +152,7 @@ void loop() {
   //** every hour do
   unsigned long currentMillisTime = millis();
   if (currentMillisTime - previousMillisTime >= intervalTime) {
-    if (WiFi.status() != WL_CONNECTED && ((HOUR >= ALARM_HOUR[0] || HOUR >= ALARM_HOUR[1] || HOUR >= ALARM_HOUR[2]) && (HOUR <= 23))) {
+    if (WiFi.status() != WL_CONNECTED && ((HOUR >= ALARM_HOUR[0] || HOUR >= ALARM_HOUR[1] || HOUR >= ALARM_HOUR[2] || HOUR >= 5) && (HOUR <= 23))) {
       connectWiFi();            // Connect Wifi if turned off before
     }
     if (WiFi.status() == WL_CONNECTED) {

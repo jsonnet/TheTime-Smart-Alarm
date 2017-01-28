@@ -83,7 +83,7 @@ void setAlarmByTraffic() {
   ADD_TRAVEL_TIME = round(duration/60);
   ALARM_MINUTE[0] -= ADD_TRAVEL_TIME;
   if(ALARM_MINUTE[0] < 0) {
-    ALARM_MINUTE[0] = (60 + ALARM_MINUTE[0])
-                      ALARM_HOUR[0] -= 1;
+    ALARM_MINUTE[0] = (60 + ALARM_MINUTE[0]);
+    ALARM_HOUR[0] -= 1;
   }
 }

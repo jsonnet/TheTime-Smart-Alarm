@@ -1,14 +1,14 @@
 void alarm() {
-  do {
-    tone(15, 300, 500);
-    changeRightPixel(0, 0, 0);
-    changeLeftPixel(255, 0, 0);
+  do { // Do at least once
+    tone(15, 3000, 300); // beep tone for 300ms
+    changeRightPixel(0, 0, 0); // right LED off
+    changeLeftPixel(255, 0, 0); // bright red
+    delay(500); // delay for short break
+    tone(15, 3000, 300); // beep tone for 300ms
+    changeLeftPixel(0, 0, 0); // left LED off
+    changeRightPixel(0, 255, 0); // bright green
     delay(500);
-    tone(15, 500, 500);
-    changeLeftPixel(0, 0, 0);
-    changeRightPixel(0, 255, 0);
-    delay(500);
-  } while(!(digitalRead(2) == LOW));
+  } while(!(digitalRead(2) == LOW)); // Until button is pressed
 
   noTone(15);
   changeLeftPixel(0, 0, 0);
@@ -80,9 +80,8 @@ void setAlarmByTraffic() {
   String value = searchXML(antwort, "<duration_in_traffic>", "<value>", "</value>"); //returns value as Stringobject
   int duration = 0;
 
-  if(!value.equals("null")){
-        duration = value.toInt();
-  }
+  if(!value.equals("null"))
+    duration = value.toInt();
 
   ADD_TRAVEL_TIME = round(duration/60);
   ALARM_MINUTE[0] -= ADD_TRAVEL_TIME;

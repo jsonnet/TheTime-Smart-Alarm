@@ -7,7 +7,6 @@ String alarm1[9];
 String alarm2[9];
 
 void serverHomepage() {
-  //server.send(200, "text/html", "<h3>Loading still</h3>");
   if (server.hasArg("ip") && server.hasArg("networkname") && server.hasArg("password")) {
     network[0] = server.arg("networkname");
     network[1] = server.arg("password");

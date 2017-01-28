@@ -8,8 +8,8 @@
 #include <WiFiUdp.h>
 ESP8266WebServer server(80);
 
-#define AP_SSID "ANNInet"               // AP Network
-#define AP_PASS "lukas8-kati8"             // PW Network
+//#define AP_SSID "Joshua's iPhone"               // AP Network
+//#define AP_PASS "winnerofhackathon"             // PW Network
 
 //** GENERAL **
 String HOME_ADDR = "Überherrn";    // Home address
@@ -181,9 +181,6 @@ void loop() {
 void setup() {
   //readFromSettings();         //Get settings
   kitInit();                  //Init board
-   
-  // String xml = "asdjfadkjgadgö<destination_value>asldfas<value>12345</value>dj<value>888888</value>lajdf<destination_thing>sakldfösafj";
-  // searchXML(xml, "<destination_value>", "<value>", "</value>");
 
   if (WiFi.status() == WL_CONNECTED) {
     //TODO set settings (alarm eg)

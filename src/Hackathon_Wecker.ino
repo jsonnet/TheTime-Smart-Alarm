@@ -25,6 +25,7 @@ String CITY = "Saarlouis";
 //** ALARM **
 int ALARM_HOUR[3] = {23,23,23};                 // Hour of alarm
 int ALARM_MINUTE[3] = {59,59,59};               // Minute of alarm
+bool ALARM_ACTIV[3] = {true, false, false};     // Active alarms
 bool WEATHER_ALARM = false;
 bool SUNRISE_ALARM = false;
 bool TRAFFIC_ALARM = false;
@@ -80,7 +81,8 @@ void loop() {
 
   //** Brightness of the display and display of things
   int v = (round(pow((light/2), 0.85)) + 2); // Calc the brightness lightLevel^0.8
-  if((HOUR >= ALARM_HOUR[0] || HOUR >= ALARM_HOUR[1] || HOUR >= ALARM_HOUR[2] || HOUR >= 5) && (HOUR <= 23)) // Shut off display at night (eg. night mode)
+  if(((HOUR >= ALARM_HOUR[0] && ALARM_ACTIV[0]) || (HOUR >= ALARM_HOUR[1] && ALARM_ACTIV[1])
+      || (HOUR >= ALARM_HOUR[2] && ALARM_ACTIV[2]) || HOUR >= 5) && (HOUR <= 23)) // Shut off display at night (eg. night mode)
     matrixAnzeige(displayInfos(), count, v); // Draw information of screen
 
   unsigned long currentMillisBlink = millis();
@@ -105,13 +107,15 @@ void loop() {
     displaySegment(v*4);
 
     //** Check for alarm
-    if ((HOUR == ALARM_HOUR[0] && MINUTE == ALARM_MINUTE[0]) || (HOUR == ALARM_HOUR[1] && MINUTE == ALARM_MINUTE[1]) || (HOUR == ALARM_HOUR[2] && MINUTE == ALARM_MINUTE[2])) {
+    if ((HOUR == ALARM_HOUR[0] && MINUTE == ALARM_MINUTE[0] && ALARM_ACTIV[0])
+        || (HOUR == ALARM_HOUR[1] && MINUTE == ALARM_MINUTE[1] && ALARM_ACTIV[1])
+        || (HOUR == ALARM_HOUR[2] && MINUTE == ALARM_MINUTE[2] && ALARM_ACTIV[2])) {
       alarm();
       set = false;
     }
 
     //** Check for alarm changes
-    if((set == false) && MINUTE == ALARM_MINUTE[0] && HOUR == (ALARM_HOUR[0] - 1)) {
+    if((set == false) && MINUTE == ALARM_MINUTE[0] && HOUR == (ALARM_HOUR[0] - 1 && ALARM_ACTIV[0])) {
       connectWiFi();
       if(WEATHER_ALARM)
         if(WiFi.status() == WL_CONNECTED) {
@@ -152,7 +156,8 @@ void loop() {
   //** every hour do
   unsigned long currentMillisTime = millis();
   if (currentMillisTime - previousMillisTime >= intervalTime) {
-    if (WiFi.status() != WL_CONNECTED && ((HOUR >= ALARM_HOUR[0] || HOUR >= ALARM_HOUR[1] || HOUR >= ALARM_HOUR[2] || HOUR >= 5) && (HOUR <= 23))) {
+    if (WiFi.status() != WL_CONNECTED && (((HOUR >= ALARM_HOUR[0] && ALARM_ACTIV[0]) || (HOUR >= ALARM_HOUR[1] && ALARM_ACTIV[1])
+                                           || (HOUR >= ALARM_HOUR[2] && ALARM_ACTIV[2]) || HOUR >= 5) && (HOUR <= 23))) {
       connectWiFi();            // Connect Wifi if turned off before
     }
     if (WiFi.status() == WL_CONNECTED) {
@@ -162,8 +167,8 @@ void loop() {
       setTime();                // Set time with udp
     }
 
-    //** Shut off WiFi at night
-    if(HOUR == 23)
+    //** Shut off WiFi at night (and min 30min on)
+    if(HOUR == 23 && millis() >= 30000)
       closeWiFi();
 
     previousMillisTime = currentMillisTime;     // Reset timer

@@ -175,3 +175,28 @@ int buttonPressed() {
 float readLightLevel(){
   return TSL2561.readVisibleLux();
 }
+
+String searchXML(String xml, String parentnode, String node, String endnode){
+
+    //divide String at parentnode
+    u_int pos = xml.indexOf(parentnode);
+
+    //if parentnode is not contained in the string the maxmial value of u_int (4294967295) is stored in pos
+    if(pos < xml.length()){
+        String s = xml.substring(pos);
+        Serial.println(s);
+
+        //get value of the node
+        pos = s.indexOf(node);
+        int valuepos_beginning = pos + node.length();
+        int valuepos_end = s.indexOf(endnode);
+        String value = s.substring(valuepos_beginning, valuepos_end);
+
+        Serial.println("Value: " + value);
+
+        return value;
+    }else{
+        Serial.println("Parentnode is not contained in the xml file!");
+        return "null";
+    }
+}

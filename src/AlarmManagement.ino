@@ -77,8 +77,12 @@ void setAlarmByTraffic() {
   // response ["row"][0]["element"][0]["duration_in_traffic"]["value"] -> in sec -> round(value/60)
   httpGET(host, cmd, antwort, true);
 
-  antwort = antwort; // Split at duration_in_traffic
-  int duration = searchXML(antwort, "value").toInt(); //XXX doesnt actually work
+  String value = searchXML(antwort, "<duration_in_traffic>", "<value>", "</value>"); //returns value as Stringobject
+  int duration = 0;
+
+  if(!value.equals("null")){
+        duration = value.toInt();
+  }
 
   ADD_TRAVEL_TIME = round(duration/60);
   ALARM_MINUTE[0] -= ADD_TRAVEL_TIME;

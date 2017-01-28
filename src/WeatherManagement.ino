@@ -54,6 +54,8 @@ void getWeatherData() {
     WEATHER_STATE = "Thunder";
   else if (strstr(weather.c_str(), "Clear"))
     WEATHER_STATE = "Clear";
+  else if (strstr(weather.c_str(), "Snow"))
+    WEATHER_STATE = "Snow";
   else {
     Serial.println(WEATHER_STATE);
     WEATHER_STATE = weather; // If getting data fails

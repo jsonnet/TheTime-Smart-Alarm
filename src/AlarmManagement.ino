@@ -64,7 +64,7 @@ void setAlarmByWeather() {
   if (strstr(WEATHER_STATE.c_str(), "Rain") || strstr(WEATHER_STATE.c_str(), "Snow") || strstr(WEATHER_STATE.c_str(), "Thunderstorms") || OUT_TEMP < -1) {
     ALARM_MINUTE[0] -= 30;
     if(ALARM_MINUTE[0] < 0) {
-      ALARM_MINUTE[0] += 30;
+      ALARM_MINUTE[0] = (60 - 30);
       ALARM_HOUR[0] -= 1;
     }
   }
@@ -83,7 +83,7 @@ void setAlarmByTraffic() {
   ADD_TRAVEL_TIME = round(duration/60);
   ALARM_MINUTE[0] -= ADD_TRAVEL_TIME;
   if(ALARM_MINUTE[0] < 0) {
-    ALARM_MINUTE[0] += ADD_TRAVEL_TIME;
+    ALARM_MINUTE[0] = (60 - ADD_TRAVEL_TIME);
     ALARM_HOUR[0] -= 1;
   }
 }

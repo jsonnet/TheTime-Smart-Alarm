@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SmartWatch</title>
+	<meta charset="utf-8" />
+	<style>
+		body {
+			background-color: #707884;
+		}
+		.keyword {
+			display: block;
+			font-size: 18px;
+			font-weight: bold;
+		}
+		.inline-block {
+			display: inline-block;
+		}
+		h1 {
+			color: #00ccff;
+			text-align: center;
+			font-family: "Arial", serif;
+		}
+		h2 {
+			text-align: center;
+		}
+		.center {
+			text-align: center;
+		}
+		#timesettings {
+			text-align: center;
+		}
+		.alarm_text{
+			color: #f9022f;
+			font-size: 16px;
+			font-weight: bold;
+		}
+	</style>
+
+	<script>
+		function connectionChanges(){
+			alert("yahoo");
+			var ID = document.getElementsByName("networkname").[0].value;
+			window.alert(ID);
+			window.alert(document.getElementsByName("networkname").[0]);
+		}
+	</script>
+
+</head>
+<body>
+	<header>
+		<h1>The Time Smart Alarm</h1>
+	</header>
+	<div id="connectionoptions" class="center">
+		<h2>Connection</h2>
+
+			<div class="keyword">Network name: </div>
+			<input type="text" name="networkname"><br>
+
+			<div class="keyword">Password: </div>
+			<input type="text" name="password"><br>
+
+			<button name="b_connection" style="margin-top: 8px;" onclick="connectionChanges()">Confirm Changes</button>
+		<hr>
+	</div>
+
+	<div id="weathersettings" class="center">
+		<h2> Weatheroptions </h2>
+		<form action="/" method="post">
+			<div class="keyword">Home address: </div>
+			<input type="text" name="locationhome"><br>
+			<div class="keyword">Work address: </div>
+			<input type="text" name="locationwork"><br>
+				<button name="b_weather" style="margin-top: 8px;" onclick="weatherChanges();">Confirm Changes</button>
+		</form>
+
+		<hr>
+	</div>
+
+
+	<h2>Timesettings</h2>
+
+	<div id="timesettings">
+		<div class="alarm" id="alarm_1">
+			<p class="alarm_text">Default Alarm</p>
+
+			<form action="/" method="post">
+				<div class="keyword" style="display: inline-block">Days: </div>
+				<input type="checkbox" name="monday0" value="Monday">Monday
+				<input type="checkbox" name="tuesday0" value="tuesday">Tuesday
+				<input type="checkbox" name="wednesday0" value="wednesday">Wednesday
+				<input type="checkbox" name="thursday0" value="thursday">Thursday
+				<input type="checkbox" name="friday0" value="friday">Friday
+				<input type="checkbox" name="saturday0" value="saturday">Saturday
+				<input type="checkbox" name="sunday0" value="sunday">Sunday
+				<br>
+				<div class="keyword" style="display: inline-block">Alarmtime: </div>
+				<input type="time" name="alarmtime0"><br>
+
+				<div class="inline-block">
+					<div class="keyword" style="display: inline-block">Wake at sunset? </div>
+					<input type="radio" name="sunset0" value="yes">yes
+					<input type="radio" name="sunset0" value="no">no
+				</div><br>
+
+				<div class="inline-block">
+					<div class="keyword" style="display: inline-block">Enable snooze? </div>
+					<input type="radio" name="snooze0" value="yes">yes
+					<input type="radio" name="snooze0" value="no">no
+				</div><br>
+
+				<div class="inline-block">
+					<div class="keyword" style="display: inline-block">Consider traffic jams? </div>
+					<input type="radio" name="traffic0" value="yes">yes
+					<input type="radio" name="traffic0" value="no">no
+				</div><br>
+
+				<div class="inline-block">
+					<div class="keyword" style="display: inline-block">Consider weather state? </div>
+					<input type="radio" name="weather0" value="yes">yes
+					<input type="radio" name="weather0" value="no">no
+				</div><br>
+
+					<button name="b_alarm1" style="margin-top: 8px;" onclick="alarmChanges();">Confirm Changes</button>
+			</form>
+		</div>
+
+		<div class="alarm" id="alarm_2">
+			<p class="alarm_text">Alarm #2</p>
+
+			<form action="/" method="post">
+				<div class="keyword" style="display: inline-block">Days: </div>
+				<input type="checkbox" name="monday1" value="Monday">Monday
+				<input type="checkbox" name="tuesday1" value="tuesday">Tuesday
+				<input type="checkbox" name="wednesday1" value="wednesday">Wednesday
+				<input type="checkbox" name="thursday1" value="thursday">Thursday
+				<input type="checkbox" name="friday1" value="friday">Friday
+				<input type="checkbox" name="saturday1" value="saturday">Saturday
+				<input type="checkbox" name="sunday1" value="sunday">Sunday
+				<br>
+				<div class="keyword" style="display: inline-block">Alarmtime: </div>
+				<input type="time" name="alarmtime1"><br>
+
+				<div class="inline-block">
+					<div class="keyword" style="display: inline-block">Enable snooze? </div>
+					<input type="radio" name="snooze1" value="yes">yes
+					<input type="radio" name="snooze1" value="no">no
+				</div><br>
+
+					<button name="b_alarm2" style="margin-top: 8px;" onclick="alarmChanges();">Confirm Changes</button>
+			</form>
+		</div>
+
+		<div class="alarm" id="alam_3">
+			<p class="alarm_text">Alarm #3</p>
+
+			<form action="/" method="post">
+				<div class="keyword" style="display: inline-block">Days: </div>
+				<input type="checkbox" name="monday2" value="Monday">Monday
+				<input type="checkbox" name="tuesday2" value="tuesday">Tuesday
+				<input type="checkbox" name="wednesday2" value="wednesday">Wednesday
+				<input type="checkbox" name="thursday2" value="thursday">Thursday
+				<input type="checkbox" name="friday2" value="friday">Friday
+				<input type="checkbox" name="saturday2" value="saturday">Saturday
+				<input type="checkbox" name="sunday2" value="sunday">Sunday
+				<br>
+				<div class="keyword" style="display: inline-block">Alarmtime: </div>
+				<input type="time" name="alarmtime2"><br>
+
+				<div class="inline-block">
+					<div class="keyword" style="display: inline-block">Enable snooze? </div>
+					<input type="radio" name="snooze2" value="yes">yes
+					<input type="radio" name="snooze2" value="no">no
+				</div><br>
+
+				<button name="b_alarm3" style="margin-top: 8px;" onclick="alarmChanges();">Confirm Changes</button>
+			</form>
+		</div>
+		<hr>
+	</div>
+
+</body>
+<html>

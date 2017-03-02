@@ -61,7 +61,7 @@ void setAlarmBySunrise() {
 
 void setAlarmByWeather() {
   // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear, [*] Snow
-  if (strstr(WEATHER_STATE.c_str(), "Rain") || strstr(WEATHER_STATE.c_str(), "Snow") || strstr(WEATHER_STATE.c_str(), "Thunderstorms") || OUT_TEMP < -1) {
+  if (strstr(WEATHER_STATE.c_str(), "Rain") || strstr(WEATHER_STATE.c_str(), "Showers") || strstr(WEATHER_STATE.c_str(), "Snow") || strstr(WEATHER_STATE.c_str(), "Thunderstorms") || OUT_TEMP < -1) {
     ALARM_MINUTE[0] -= 30;
     if(ALARM_MINUTE[0] < 0) {
       ALARM_MINUTE[0] = (60 - 30);

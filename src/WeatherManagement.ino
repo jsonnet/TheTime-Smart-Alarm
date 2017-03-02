@@ -41,11 +41,13 @@ void getWeatherData() {
   WEATHER_STATE = weather;
 
   //TODO try icons
-  // [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear, [*] Snow
+  // [*] Cloudy, [*] Rain, [*] Showers [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear, [*] Snow
   if (strstr(weather.c_str(), "Cloudy") )
     WEATHER_STATE = "Cloudy";
   else if (strstr(weather.c_str(), "Rain"))
     WEATHER_STATE = "Rain";
+  else if (strstr(weather.c_str(), "Showers"))
+    WEATHER_STATE = "Showers";
   else if (strstr(weather.c_str(), "Breezy"))
     WEATHER_STATE = "Breezy";
   else if (strstr(weather.c_str(), "Sunny"))

@@ -3,8 +3,8 @@
 #define PIN_ADC A0                // Sound Sensor -> analogRead(PIN_ADC)
 
 //** Rotary encoder knob / button
-#include <Encoder.h>
-Encoder encoder(14, 12);
+//#include <Encoder.h>
+//Encoder encoder(14, 12);
 
 //** LEDs
 #include <Adafruit_NeoPixel.h>    // NeoPixel LEDs
@@ -101,7 +101,7 @@ void httpGET(String host, String url, String &antwort, bool secure){
 //**** Charlieplex Matrix //** pwm 0 - 255
 void matrixAnzeige(String text, int x, int pwm) {
   int anzahlPixel = (text.length()) * 6;
-  matrix.setTextColor(pwm < 255 ? pwm : 255);        //Color brightness
+  matrix.setTextColor(pwm < 128 ? pwm : 128);        //Color brightness act. up to 255
   matrix.setTextWrap(false);
   matrix.clear();
   matrix.setCursor(-(x%anzahlPixel), 0);
@@ -163,9 +163,9 @@ void changeRightPixel(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 //**** Simplefied to get rotary position
-int rotaryRead() {
-  return encoder.read();
-}
+/*int rotaryRead() {
+   return encoder.read();
+   }*/
 
 //**** Simplefied to get encode button pressed
 int buttonPressed() {
@@ -178,25 +178,25 @@ float readLightLevel(){
 
 String searchXML(String xml, String parentnode, String node, String endnode){
 
-    //divide String at parentnode
-    u_int pos = xml.indexOf(parentnode);
+  //divide String at parentnode
+  u_int pos = xml.indexOf(parentnode);
 
-    //if parentnode is not contained in the string the maxmial value of u_int (4294967295) is stored in pos
-    if(pos < xml.length()){
-        String s = xml.substring(pos);
-        Serial.println(s);
+  //if parentnode is not contained in the string the maxmial value of u_int (4294967295) is stored in pos
+  if(pos < xml.length()) {
+    String s = xml.substring(pos);
+    Serial.println(s);
 
-        //get value of the node
-        pos = s.indexOf(node);
-        int valuepos_beginning = pos + node.length();
-        int valuepos_end = s.indexOf(endnode);
-        String value = s.substring(valuepos_beginning, valuepos_end);
+    //get value of the node
+    pos = s.indexOf(node);
+    int valuepos_beginning = pos + node.length();
+    int valuepos_end = s.indexOf(endnode);
+    String value = s.substring(valuepos_beginning, valuepos_end);
 
-        Serial.println("Value: " + value);
+    Serial.println("Value: " + value);
 
-        return value;
-    }else{
-        Serial.println("Parentnode is not contained in the xml file!");
-        return "null";
-    }
+    return value;
+  }else{
+    Serial.println("Parentnode is not contained in the xml file!");
+    return "null";
+  }
 }

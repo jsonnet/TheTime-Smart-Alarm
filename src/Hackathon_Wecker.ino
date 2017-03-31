@@ -8,8 +8,8 @@
 #include <WiFiUdp.h>
 ESP8266WebServer server(80);
 
-//#define AP_SSID "Joshua's iPhone"               // AP Network
-//#define AP_PASS "winnerofhackathon"             // PW Network
+#define AP_SSID "Joshua's iPhone"               // AP Network
+#define AP_PASS "winnerofhackathon"             // PW Network
 
 //** GENERAL **
 String HOME_ADDR = "Überherrn";    // Home address
@@ -20,17 +20,19 @@ String WOEID;
 int OUT_TEMP = 0;                               // Weather temperature
 String WEATHER_STATE;                           // State of weather [*] Cloudy, [*] Rain, [*] Breezy, [*] Sunny, [*] Thunderstorms, Clear
 String SUNRISE;                                 // Sunrise time
-String CITY = "Saarlouis";
+String CITY = "Saarbruecken";
 
 //** ALARM **
 int ALARM_HOUR[3] = {23,23,23};                 // Hour of alarm
 int ALARM_MINUTE[3] = {59,59,59};               // Minute of alarm
-bool ALARM_ACTIV[3] = {true, false, false};     // Active alarms
+bool ALARM_ACTIV[3] = {true, true, false};     // Active alarms
 bool WEATHER_ALARM = false;
 bool SUNRISE_ALARM = false;
 bool TRAFFIC_ALARM = false;
 bool set = false; // helps to set alarm to weather, sunrise or traffic only once
-bool alarmDays[7] = { false, false, false, false, false, false, false };     // days the alarm goes off SUN, MON ...
+bool alarmDays[3][7] = {{ false, false, false, false, false, false, false },
+                        { false, false, false, false, false, false, false },
+                        { false, false, false, false, false, false, false }};     // days the alarm goes off SUN, MON ...
 
 //** TRAFFIC **
 int ADD_TRAVEL_TIME = 0;                        // Additional time for travel and traffic
@@ -60,7 +62,7 @@ const long intervalTime = 3600000;               // 1 hour
 //** ACTUAL TIME **
 int HOUR;
 int MINUTE;
-int TIMEZONE = 1;
+int TIMEZONE = 2;
 long epochTime;
 char date[15];
 
@@ -77,9 +79,9 @@ void displaySegment(int v){
 unsigned int count = 0;
 void loop() {
   server.handleClient(); //webserver handle clients
-  float light = readLightLevel();
 
   //** Brightness of the display and display of things
+  float light = readLightLevel();
   int v = (round(pow((light/2), 0.85)) + 2); // Calc the brightness lightLevel^0.8
   if(((HOUR >= ALARM_HOUR[0] && ALARM_ACTIV[0]) || (HOUR >= ALARM_HOUR[1] && ALARM_ACTIV[1])
       || (HOUR >= ALARM_HOUR[2] && ALARM_ACTIV[2]) || HOUR >= 5) && (HOUR <= 23)) // Shut off display at night (eg. night mode)
@@ -91,7 +93,7 @@ void loop() {
     previousMillisBlink = currentMillisBlink;
   }
 
-  //** every minute do
+  //** every minute do (change display and time, check alarm and changes)
   unsigned long currentMillisMinute = millis();
   if (currentMillisMinute - previousMillisMinute >= intervalMinute) {
     _adjustTime((currentMillisMinute - previousMillisMinute - intervalMinute) / 1000);    // Adjust time by lost one over updating delay
@@ -174,17 +176,17 @@ void loop() {
     previousMillisTime = currentMillisTime;     // Reset timer
   }
 
+
   count++; // Var for display scroll
   delay(20);
 }
 
 void setup() {
-  //readFromSettings();         //Get settings
+  readFromSettings();         //Get settings
+  setData();                  // Set stored data
   kitInit();                  //Init board
 
   if (WiFi.status() == WL_CONNECTED) {
-    //TODO set settings (alarm eg)
-    //TODO: retrieve city data from webserver/settingsfile
     WOEID = getWoeid();       // Use for getting location id
     getWeatherData();         // Store current weather data
     getTempData();            // Store current temperatur
@@ -197,5 +199,8 @@ void setup() {
   server.begin();                     //Init webserver
 
   changeRightPixel(0, 0, 0);
-  displaySegment(10);
+  displaySegment(85);
+
+  pinMode(12, INPUT_PULLUP);
+  digitalWrite(12, HIGH);
 }

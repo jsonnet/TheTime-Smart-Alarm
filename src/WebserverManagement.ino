@@ -8,7 +8,7 @@ String alarm1[9];
 String alarm2[9];
 
 void serverHomepage() {
-  if (server.hasArg("ip") && server.hasArg("networkname") && server.hasArg("password")) {
+  if (server.hasArg("networkname") && server.hasArg("password")) {
     network[0] = server.arg("networkname");
     network[1] = server.arg("password");
   }
@@ -16,9 +16,7 @@ void serverHomepage() {
     weather[0] = server.arg("locationhome");
     weather[1] = server.arg("locationwork");
   }
-  if (server.hasArg("monday0") && server.hasArg("tuesday0") && server.hasArg("wednesday0")
-      && server.hasArg("thursday0") && server.hasArg("friday0") && server.hasArg("saturday0")
-      && server.hasArg("sunday0") && server.hasArg("alarmtime0") && server.hasArg("sunset0")
+  if (server.hasArg("alarmtime0") && server.hasArg("sunset0")
       && server.hasArg("snooze0") && server.hasArg("traffic0") && server.hasArg("weather0")) {
     alarm0[0] = server.arg("monday0");
     alarm0[1] = server.arg("tuesday0");
@@ -33,9 +31,7 @@ void serverHomepage() {
     alarm0[10] = server.arg("traffic0");
     alarm0[11] = server.arg("weather0");
   }
-  if (server.hasArg("monday1") && server.hasArg("tuesday1") && server.hasArg("wednesday1")
-      && server.hasArg("thursday1") && server.hasArg("friday1") && server.hasArg("saturday1")
-      && server.hasArg("sunday1") && server.hasArg("alarmtime1") && server.hasArg("snooze1")) {
+  if (server.hasArg("alarmtime1") && server.hasArg("snooze1")) {
     alarm1[0] = server.arg("monday1");
     alarm1[1] = server.arg("tuesday1");
     alarm1[2] = server.arg("wednesday1");
@@ -46,9 +42,7 @@ void serverHomepage() {
     alarm1[7] = server.arg("alarmtime1");
     alarm1[8] = server.arg("snooze1");
   }
-  if (server.hasArg("monday2") && server.hasArg("tuesday2") && server.hasArg("wednesday2")
-      && server.hasArg("thursday2") && server.hasArg("friday2") && server.hasArg("saturday2")
-      && server.hasArg("sunday2") && server.hasArg("alarmtime2") && server.hasArg("snooze2")) {
+  if (server.hasArg("alarmtime2") && server.hasArg("snooze2")) {
     alarm2[0] = server.arg("monday2");
     alarm2[1] = server.arg("tuesday2");
     alarm2[2] = server.arg("wednesday2");
@@ -59,7 +53,7 @@ void serverHomepage() {
     alarm2[7] = server.arg("alarmtime2");
     alarm2[8] = server.arg("snooze2");
   }
-  //saveToSettings(); // Save to Settings after getting data
+  saveToSettings(); // Save to Settings after getting data
   server.send(200, "text/html", getPage()); //change here to file
 }
 
@@ -145,6 +139,8 @@ bool readFromSettings() {
   alarm2[7] = json["alarmtime2"].asString();
   alarm2[8] = json["snooze2"].asString();
 
+  Serial.println(weather[0]);
+
   configFile.close();
   SPIFFS.end();           // Important close filesystem
   return true;
@@ -195,8 +191,61 @@ bool saveToSettings() {
     return false;
   }
 
+  /*for(int i = 0; i < 2; i++) {
+     Serial.println(network[i]);
+     }
+     for(int i = 0; i < 2; i++) {
+     Serial.println(weather[i]);
+     }
+     for(int i = 0; i < 12; i++) {
+     Serial.println(alarm0[i]);
+     }
+     for(int i = 0; i < 9; i++) {
+     Serial.println(alarm1[i]);
+     }
+     for(int i = 0; i < 9; i++) {
+     Serial.println(alarm2[i]);
+     }*/
+
   json.printTo(configFile);
   configFile.close();
   SPIFFS.end();
+  setData();
   return true;
+}
+
+void setData(){
+  HOME_ADDR = weather[0];
+  WORK_ADDR = weather[1];
+  CITY = weather[0];
+  //AP_SSID = network[0]; //FIXME read-only
+  //AP_PASS = network[1];
+  char houralarm1[2] = {alarm0[7].charAt(0), alarm0[7].charAt(1)};
+  ALARM_HOUR[0] = atoi(houralarm1);
+  char houralarm2[2] = {alarm1[7].charAt(0), alarm1[7].charAt(1)};
+  ALARM_HOUR[1] = atoi(houralarm2);
+  char houralarm3[2] = {alarm2[7].charAt(0), alarm2[7].charAt(1)};
+  ALARM_HOUR[2] = atoi(houralarm3);
+
+  char minutealarm1[2] = {alarm0[7].charAt(3), alarm0[7].charAt(4)};
+  ALARM_MINUTE[0] = atoi(minutealarm1);
+  char minutealarm2[2] = {alarm1[7].charAt(3), alarm1[7].charAt(4)};
+  ALARM_MINUTE[1] = atoi(minutealarm2);
+  char minutealarm3[2] = {alarm2[7].charAt(3), alarm2[7].charAt(4)};
+  ALARM_MINUTE[2] = atoi(minutealarm3);
+  /*for(int i = 0; i < 7; i++) { //FIXME Problem with String
+     if(strcmp(alarm0[i].c_str(), "yes") == 0)
+      alarmDays[0][i] = true;
+     if(strcmp(alarm1[i].c_str(), "yes") == 0)
+      alarmDays[1][i] = true;
+     if(strcmp(alarm2[i].c_str(), "yes") == 0)
+      alarmDays[2][i] = true;
+     Serial.println("loop");
+     }*/
+  /*if(strcmp(alarm0[8].c_str(), "yes") == 0)
+     SUNRISE_ALARM = true;
+     if(strcmp(alarm0[10].c_str(), "yes") == 0)
+     TRAFFIC_ALARM = true;
+     if(strcmp(alarm0[11].c_str(), "yes") == 0)
+     WEATHER_ALARM = true;*/
 }

@@ -8,7 +8,7 @@ void alarm() {
     changeLeftPixel(0, 0, 0); // left LED off
     changeRightPixel(0, 255, 0); // bright green
     delay(500);
-  } while(!(digitalRead(2) == LOW)); // Until button is pressed
+  } while(!(digitalRead(12) == LOW)); // Until button is pressed
 
   noTone(15);
   changeLeftPixel(0, 0, 0);
@@ -16,12 +16,12 @@ void alarm() {
   setTime();
 }
 
-void playMelody(){
-  int tempo = 113;
-  int beats[] = {1,1,1,1,1,1,4,4,2,1,1,1,1,1,1,4,4,2};
-  char notes[] = "cdfda ag cdfdg gf ";
+/*void playMelody(){
+   int tempo = 113;
+   int beats[] = {1,1,1,1,1,1,4,4,2,1,1,1,1,1,1,4,4,2};
+   char notes[] = "cdfda ag cdfdg gf ";
 
-  for (int i = 0; i < sizeof(beats); i++) { // step through the song arrays
+   for (int i = 0; i < sizeof(beats); i++) { // step through the song arrays
     int duration = beats[i] * tempo;
 
     if (notes[i] == ' ') {
@@ -31,20 +31,20 @@ void playMelody(){
       delay(duration); // wait for tone to finish
     }
     delay(tempo/10); // brief pause between notes
-  }
-}
+   }
+   }
 
-int frequency(char note) {
-  char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
-  int frequencies[] = {262, 294, 330, 349, 392, 440, 494, 523};
+   int frequency(char note) {
+   char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
+   int frequencies[] = {262, 294, 330, 349, 392, 440, 494, 523};
 
-  for (int i = 0; i < sizeof(names); i++) {
+   for (int i = 0; i < sizeof(names); i++) {
     if (names[i] == note) {
       return(frequencies[i]);
     }
-  }
-  return(0);
-}
+   }
+   return(0);
+   }*/
 
 void setAlarmBySunrise() {
   if(strcmp(SUNRISE.c_str(), "")) // If SUNRISE data is empty eg. could not get at startup
@@ -72,16 +72,19 @@ void setAlarmByWeather() {
 
 void setAlarmByTraffic() {
   String host = "maps.googleapis.com";
-  String cmd = "maps/api/distancematrix/xml?origins=" + HOME_ADDR + "&destinations=" + WORK_ADDR + "&key=AIzaSyCa-lnY9bJN5gGNKnhWaHCE9SnI82X0QgQ";
+  String cmd = "maps/api/distancematrix/xml?origins=" + HOME_ADDR + "&destinations=" + WORK_ADDR + "&departure_time=now&key=AIzaSyCa-lnY9bJN5gGNKnhWaHCE9SnI82X0QgQ";
   String antwort;
   // response ["row"][0]["element"][0]["duration_in_traffic"]["value"] -> in sec -> round(value/60)
   httpGET(host, cmd, antwort, true);
 
+  String valueStandard = searchXML(antwort, "<duration>", "<value>", "</value>");
   String value = searchXML(antwort, "<duration_in_traffic>", "<value>", "</value>"); //returns value as Stringobject
   int duration = 0;
 
   if(!value.equals("null"))
-    duration = value.toInt();
+    duration = value.toInt() - valueStandard.toInt();
+
+  Serial.println(duration);
 
   ADD_TRAVEL_TIME = round(duration/60);
   ALARM_MINUTE[0] -= ADD_TRAVEL_TIME;
